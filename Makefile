@@ -1,14 +1,22 @@
-local_test_version = 99.0.0
+.PHONY: build, build-local, format, test, testacc, deps
+LOCAL_TEST_VERSION = 99.0.0
+OS_ARCH = darwin_amd64
+
+build:
+	go build
 
 build-local:
-	go build -o terraform-provider-amplience_${local_test_version}
-	cp terraform-provider-amplience_${version} ~/.terraform.d/plugins/registry.terraform.io/hashicorp/amplience/${local_test_version}/darwin_amd64/terraform-provider-amplience_v${local_test_version}
+	go build -o terraform-provider-amplience_${LOCAL_TEST_VERSION}
+	cp terraform-provider-amplience_${LOCAL_TEST_VERSION} ~/.terraform.d/plugins/registry.terraform.io/hashicorp/amplience/${LOCAL_TEST_VERSION}/${OS_ARCH}/terraform-provider-amplience_v${LOCAL_TEST_VERSION}
 
 format:
 	go fmt ./...
 
 test:
 	go test -v ./...
+
+testacc:
+ 	TF_ACC=1 go test -v ./...
 
 deps:
 	go mod tidy
