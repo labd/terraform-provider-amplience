@@ -1,0 +1,34 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 4
+      matrix:
+        go-version: [1.15]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Install dependencies
+        run: go get ./amplience_provider
+      - name: Run tests
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=./amplience_provider -v ./amplience_provider
+        env:
+          TF_ACC: 1
+          AMPLIENCE_CLIENT_ID: ${{ secrets.AMPLIENCE_CLIENT_ID }}
+          AMPLIENCE_CLIENT_SECRET: ${{ secrets.AMPLIENCE_CLIENT_SECRET }}
+          AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v1.0.6
