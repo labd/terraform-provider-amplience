@@ -1,7 +1,3 @@
-0.1.0 (2018-09-14)
+0.1.0 (unreleased)
 ==================
-- Set-up of small client "library"
-- **First resource:** `amplience_content_repository`
-
-
-
+- **New resource:** `amplience_content_repository`
