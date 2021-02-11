@@ -1,6 +1,0 @@
-repo_url: https://github.com/labd/terraform-provider-amplience
-site_name: Amplience Terraform provider
-theme: readthedocs
-markdown_extensions:
-  - admonition
-
