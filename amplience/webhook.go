@@ -142,23 +142,3 @@ type WebhookCustomPayload struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
 }
-
-// API expects the values in WebhookFilter argument to be objects hence the extra level of struct nesting and the
-// custom marshaller
-type WebhookFilterArguments struct {
-	JSONPath WebHookFilterArgumentJSONPath     `json:""`
-	Value    WebhookFilterArgumentValueWrapper `json:"value"`
-}
-
-type WebhookFilterArgumentValueWrapper struct {
-	Value     []string `json:"value"`
-	SingleVal bool
-}
-
-type WebHookFilterArgumentJSONPath struct {
-	JSONPath string `json:"jsonPath"`
-}
-
-type WebhookFilterArgumentValue struct {
-	Value []string `json:"value"`
-}
