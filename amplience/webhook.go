@@ -71,7 +71,7 @@ type WebhookFilterJSONPath struct {
 }
 
 func (r *RawArg) UnmarshalJSON(buf []byte) error {
-	jsonPath := WebHookFilterArgumentJSONPath{}
+	jsonPath := WebhookFilterJSONPath{}
 	err := json.Unmarshal(buf, &jsonPath)
 	// If we find a jsonPath return immediately
 	if err == nil && jsonPath.JSONPath != "" {
