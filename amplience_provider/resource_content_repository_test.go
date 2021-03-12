@@ -34,7 +34,7 @@ func TestAccContentRepository_CreateAndUpdate(t *testing.T) {
 				Config: testAccContentRepositoryConfig(name, label+"-updated"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						"amplience_content_repository.testrepo", "name", name,
+						"amplience_content_repository.testrepo", "name", name+"-updated",
 					),
 					resource.TestCheckResourceAttr(
 						"amplience_content_repository.testrepo", "label", label+"-updated",

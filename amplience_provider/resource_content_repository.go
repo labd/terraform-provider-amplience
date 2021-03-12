@@ -244,7 +244,7 @@ func updateContentRepositoryWithID(contentRepoID string, requestBody *bytes.Buff
 
 	response, err := amplience.AmplienceRequest(APIPath, http.MethodPatch, requestBody)
 	if err != nil {
-		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
+		return nil, fmt.Errorf("unable to make PATCH request to %s: %w", APIPath, err)
 	}
 	err = amplience.ParseAndUnmarshalAmplienceResponseBody(response, &repository)
 	if err != nil {
