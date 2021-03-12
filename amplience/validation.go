@@ -30,3 +30,15 @@ func ValidateDiagWrapper(validateFunc func(interface{}, string) ([]string, []err
 		return diags
 	}
 }
+
+// StringInSlice takes a slice and looks for an element in it. If found it will return true
+// can be used to manually validate elements in a list in the create/update process as terraform validation functions
+// are not designed for lists
+func StringInSlice(slice []string, val string) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}

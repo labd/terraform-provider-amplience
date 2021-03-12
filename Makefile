@@ -12,8 +12,9 @@ build-local:
 format:
 	go fmt ./...
 
+# Added grep is to remove clutter in the test logs from the parallelisation
 test:
-	go test -v ./...
+	go test -v ./... | grep -v 'PAUSE\|CONT'
 
 testacc:
  	TF_ACC=1 go test -v ./...
