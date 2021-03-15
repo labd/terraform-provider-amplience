@@ -5,14 +5,6 @@ The intention of this provider is to cover the [Amplience dynamic content manage
 
 One provider can manage the resource of one HubID
 
-## TODO List 
-- Currently this repository contains a minimal `amplience` package to call the Amplience API with. However one of the first things 
-that should be improved for this project is that a proper Amplience Client Library should be set up
-- The above Client Library should implement support for multiple Hubs in a clear and logical manner (1 Hub = 1 Provider)
-- Unit/acceptance tests should be expanded
-- It would be nice to have a Mock Amplience server to run (non-acceptance) tests against
-- The above tests can then be made to run on push through a Github Action
-
 ## Currently supported resources
 
 Currently the checked resources are supported. Support for additional resources will come when they are required in projects, or contributed.
@@ -35,7 +27,7 @@ Currently the checked resources are supported. Support for additional resources 
 - [ ] Search Indexes - Analyics
 - [ ] Slots
 - [ ] Snapshots
-- [ ] Webhooks
+- [x] Webhooks
 - [ ] Workflows
 - [ ] Hierarchy Node
 
@@ -144,6 +136,14 @@ use Goreleaser to build and release the build.
 git tag <release> -m "Release <release>" # please use semantic version, so always vX.Y.Z
 git push --follow-tags
 ```
+
+## TODO List 
+- Currently this repository contains a minimal `amplience` package to call the Amplience API with. However one of the first things 
+that should be improved for this project is that a proper Amplience Client Library should be set up
+- The above Client Library should implement support for multiple Hubs in a clear and logical manner (1 Hub = 1 Provider)
+- Unit/acceptance tests should be expanded
+- It would be nice to have a Mock Amplience server to run (non-acceptance) tests against
+- The above tests can then be made to run on push through a Github Action
 
 ## Authors
 

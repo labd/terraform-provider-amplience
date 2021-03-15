@@ -1,4 +1,4 @@
-.PHONY: build, build-local, format, test, testacc, deps
+.PHONY: build, build-local, format, test, testacc, deps, docs
 LOCAL_TEST_VERSION = 99.0.0
 OS_ARCH = darwin_amd64
 
@@ -22,3 +22,6 @@ testacc:
 deps:
 	go mod tidy
 	go mod vendor
+
+docs:
+	tfplugindocs
