@@ -46,6 +46,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"amplience_content_repository": resourceContentRepository(),
 			"amplience_webhook":            resourceWebhook(),
+			"amplience_content_type": resourceContentType(),
 		},
 		ConfigureContextFunc: amplienceProviderConfigure,
 	}
