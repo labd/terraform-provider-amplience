@@ -26,7 +26,7 @@ when these fields are changed. If only other fields are changed the existing Web
 
 ## Example Usage
 ```hcl
-	resource "amplience_webhook" "standard" {
+resource "amplience_webhook" "standard" {
   label = "webhook_example_label"
 
   events = [
