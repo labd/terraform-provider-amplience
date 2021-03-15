@@ -70,7 +70,7 @@ func amplienceProviderConfigure(ctx context.Context, data *schema.ResourceData) 
 	}
 	contentAPIPath := data.Get("content_api_path").(string)
 
-	client := &amplience.Client{
+	client := &amplience.ClientConfig{
 		ID:             clientID,
 		Secret:         clientSecret,
 		HubID:          hubID,

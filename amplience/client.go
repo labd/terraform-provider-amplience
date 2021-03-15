@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -15,7 +14,7 @@ import (
 )
 
 // Placeholder client struct to pass client info into meta
-type Client struct {
+type ClientConfig struct {
 	ID             string
 	Secret         string
 	HubID          string
@@ -24,7 +23,7 @@ type Client struct {
 
 // AmplienceRequest is a util func to abstract HTTP requests to the Amplience API which will be placeholders for a poc
 // before we develop an Amplience Client library to handle the requests
-func AmplienceRequest(url string, requestType string, requestBody *bytes.Buffer) (*http.Response, error) {
+func AmplienceRequest(config *ClientConfig, url string, requestType string, requestBody *bytes.Buffer) (*http.Response, error) {
 	var req *http.Request
 	var err error
 	switch requestType {
@@ -43,7 +42,7 @@ func AmplienceRequest(url string, requestType string, requestBody *bytes.Buffer)
 		return nil, fmt.Errorf("error creating %s request to %s for body %v: %w", requestType, url, requestBody, err)
 	}
 
-	token, err := getAmplienceOAuthToken()
+	token, err := getAmplienceOAuthToken(config)
 	if err != nil {
 		return nil, fmt.Errorf("could not get Oauth token for request: %w", err)
 	}
@@ -87,14 +86,12 @@ func HandleAmplienceError(response *http.Response) *resource.RetryError {
 	}
 }
 
-func getAmplienceOAuthToken() (string, error) {
+func getAmplienceOAuthToken(config *ClientConfig) (string, error) {
 	authURL := "https://auth.adis.ws/oauth/token"
-	clientID := os.Getenv("AMPLIENCE_CLIENT_ID")
-	clientSecret := os.Getenv("AMPLIENCE_CLIENT_SECRET")
-
+	
 	data := url.Values{}
-	data.Set("client_id", clientID)
-	data.Set("client_secret", clientSecret)
+	data.Set("client_id", config.ID)
+	data.Set("client_secret", config.Secret)
 	data.Set("grant_type", "client_credentials")
 
 	req, err := http.NewRequest(http.MethodPost, authURL, strings.NewReader(data.Encode()))

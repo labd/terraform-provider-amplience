@@ -146,7 +146,7 @@ func resourceWebhook() *schema.Resource {
 
 func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks", c.HubID)
 
 	var webhook *amplience.Webhook
@@ -163,7 +163,7 @@ func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error marshalling draft %v: %w", draft, err))
 		}
-		response, err = amplience.AmplienceRequest(APIPath, http.MethodPost, bytes.NewBuffer(requestBody))
+		response, err = amplience.AmplienceRequest(c, APIPath, http.MethodPost, bytes.NewBuffer(requestBody))
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error during http request: %w", err))
 		}
@@ -195,8 +195,8 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 	// Below to be replaced with client library function
 	webhook, err := getWebhookWithID(webhookID, meta)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error occurred when trying to get webhook with id %[1]s",
-			webhookID))
+		return diag.FromErr(fmt.Errorf("error occurred when trying to get webhook with id %[1]s: %w",
+			webhookID, err))
 	}
 	if webhook == nil {
 		log.Print("[DEBUG] No webhook found")
@@ -274,7 +274,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 	var diags diag.Diagnostics
 	webhookID := data.Id()
 
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 
 	webhook, err := getWebhookWithID(webhookID, meta)
 	if err != nil {
@@ -352,10 +352,10 @@ func createWebhookDraft(data *schema.ResourceData) (*amplience.Webhook, error) {
 func getWebhookWithID(webhookID string, meta interface{}) (*amplience.Webhook, error) {
 	webhook := amplience.Webhook{}
 
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
 
-	response, err := amplience.AmplienceRequest(APIPath, http.MethodGet, nil)
+	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodGet, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
 	}
@@ -370,11 +370,11 @@ func getWebhookWithID(webhookID string, meta interface{}) (*amplience.Webhook, e
 // The functionality of this should be abstracted into client library
 // Note that in its current state the function can not detect whether a resource is present before deleting it
 func deleteWebhookWithID(webhookID string, meta interface{}) error {
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 
 	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
 
-	response, err := amplience.AmplienceRequest(APIPath, http.MethodDelete, nil)
+	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodDelete, nil)
 	if err != nil {
 		return fmt.Errorf("unable to make DELETE request to %s: %w", APIPath, err)
 	}
@@ -388,11 +388,11 @@ func deleteWebhookWithID(webhookID string, meta interface{}) error {
 // The functionality of this should be abstracted into client library
 func updateWebhookWithID(webhookID string, requestBody *bytes.Buffer, meta interface{}) (*amplience.Webhook, error) {
 	webhook := amplience.Webhook{}
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 
 	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
 
-	response, err := amplience.AmplienceRequest(APIPath, http.MethodPatch, requestBody)
+	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodPatch, requestBody)
 	if err != nil {
 		return nil, fmt.Errorf("unable to make PATCH request to %s: %w", APIPath, err)
 	}

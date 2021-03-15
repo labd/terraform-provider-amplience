@@ -75,7 +75,7 @@ func resourceContentRepository() *schema.Resource {
 
 func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 
 	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/content-repositories", c.HubID)
 
@@ -90,7 +90,7 @@ func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceD
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error marshalling draft %v: %w", draft, err))
 		}
-		response, err = amplience.AmplienceRequest(APIPath, http.MethodPost, bytes.NewBuffer(requestBody))
+		response, err = amplience.AmplienceRequest(c, APIPath, http.MethodPost, bytes.NewBuffer(requestBody))
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error during http request: %w", err))
 		}
@@ -219,10 +219,10 @@ func resourceContentRepositoryDelete(ctx context.Context, data *schema.ResourceD
 func getContentRepositoryWithID(contentRepoID string, meta interface{}) (*amplience.ContentRepository, error) {
 	repository := amplience.ContentRepository{}
 
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 	APIPath := fmt.Sprintf(c.ContentAPIPath + "/content-repositories/" + contentRepoID)
 
-	response, err := amplience.AmplienceRequest(APIPath, http.MethodGet, nil)
+	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodGet, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
 	}
@@ -239,10 +239,10 @@ func getContentRepositoryWithID(contentRepoID string, meta interface{}) (*amplie
 func updateContentRepositoryWithID(contentRepoID string, requestBody *bytes.Buffer, meta interface{}) (*amplience.ContentRepository, error) {
 	repository := amplience.ContentRepository{}
 
-	c := meta.(*amplience.Client)
+	c := meta.(*amplience.ClientConfig)
 	APIPath := fmt.Sprintf(c.ContentAPIPath + "/content-repositories/" + contentRepoID)
 
-	response, err := amplience.AmplienceRequest(APIPath, http.MethodPatch, requestBody)
+	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodPatch, requestBody)
 	if err != nil {
 		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
 	}
