@@ -77,7 +77,7 @@ func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceD
 	var diags diag.Diagnostics
 	c := meta.(*amplience.ClientConfig)
 
-	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/content-repositories", c.HubID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl+"/hubs/%[1]s/content-repositories", c.HubID)
 
 	var repository *amplience.ContentRepository
 	var response *http.Response
@@ -90,7 +90,7 @@ func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceD
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error marshalling draft %v: %w", draft, err))
 		}
-		response, err = amplience.AmplienceRequest(c, APIPath, http.MethodPost, bytes.NewBuffer(requestBody))
+		response, err = amplience.AmplienceRequest(c, apiPath, http.MethodPost, bytes.NewBuffer(requestBody))
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error during http request: %w", err))
 		}
@@ -220,11 +220,11 @@ func getContentRepositoryWithID(contentRepoID string, meta interface{}) (*amplie
 	repository := amplience.ContentRepository{}
 
 	c := meta.(*amplience.ClientConfig)
-	APIPath := fmt.Sprintf(c.ContentAPIPath + "/content-repositories/" + contentRepoID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl + "/content-repositories/" + contentRepoID)
 
-	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodGet, nil)
+	response, err := amplience.AmplienceRequest(c, apiPath, http.MethodGet, nil)
 	if err != nil {
-		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
+		return nil, fmt.Errorf("unable to make GET request to %s: %w", apiPath, err)
 	}
 
 	err = amplience.ParseAndUnmarshalAmplienceResponseBody(response, &repository)
@@ -240,11 +240,11 @@ func updateContentRepositoryWithID(contentRepoID string, requestBody *bytes.Buff
 	repository := amplience.ContentRepository{}
 
 	c := meta.(*amplience.ClientConfig)
-	APIPath := fmt.Sprintf(c.ContentAPIPath + "/content-repositories/" + contentRepoID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl + "/content-repositories/" + contentRepoID)
 
-	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodPatch, requestBody)
+	response, err := amplience.AmplienceRequest(c, apiPath, http.MethodPatch, requestBody)
 	if err != nil {
-		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
+		return nil, fmt.Errorf("unable to make GET request to %s: %w", apiPath, err)
 	}
 	err = amplience.ParseAndUnmarshalAmplienceResponseBody(response, &repository)
 	if err != nil {

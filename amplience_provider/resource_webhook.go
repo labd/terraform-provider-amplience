@@ -146,7 +146,7 @@ func resourceWebhook() *schema.Resource {
 func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := meta.(*amplience.ClientConfig)
-	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks", c.HubID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl+"/hubs/%[1]s/webhooks", c.HubID)
 
 	var webhook *amplience.Webhook
 	var response *http.Response
@@ -162,7 +162,7 @@ func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error marshalling draft %v: %w", draft, err))
 		}
-		response, err = amplience.AmplienceRequest(c, APIPath, http.MethodPost, bytes.NewBuffer(requestBody))
+		response, err = amplience.AmplienceRequest(c, apiPath, http.MethodPost, bytes.NewBuffer(requestBody))
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("error during http request: %w", err))
 		}
@@ -341,11 +341,11 @@ func getWebhookWithID(webhookID string, meta interface{}) (*amplience.Webhook, e
 	webhook := amplience.Webhook{}
 
 	c := meta.(*amplience.ClientConfig)
-	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
 
-	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodGet, nil)
+	response, err := amplience.AmplienceRequest(c, apiPath, http.MethodGet, nil)
 	if err != nil {
-		return nil, fmt.Errorf("unable to make GET request to %s: %w", APIPath, err)
+		return nil, fmt.Errorf("unable to make GET request to %s: %w", apiPath, err)
 	}
 	err = amplience.ParseAndUnmarshalAmplienceResponseBody(response, &webhook)
 	if err != nil {
@@ -360,11 +360,11 @@ func getWebhookWithID(webhookID string, meta interface{}) (*amplience.Webhook, e
 func deleteWebhookWithID(webhookID string, meta interface{}) error {
 	c := meta.(*amplience.ClientConfig)
 
-	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
 
-	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodDelete, nil)
+	response, err := amplience.AmplienceRequest(c, apiPath, http.MethodDelete, nil)
 	if err != nil {
-		return fmt.Errorf("unable to make DELETE request to %s: %w", APIPath, err)
+		return fmt.Errorf("unable to make DELETE request to %s: %w", apiPath, err)
 	}
 	if response.StatusCode == http.StatusNoContent {
 		return nil
@@ -378,11 +378,11 @@ func updateWebhookWithID(webhookID string, requestBody *bytes.Buffer, meta inter
 	webhook := amplience.Webhook{}
 	c := meta.(*amplience.ClientConfig)
 
-	APIPath := fmt.Sprintf(c.ContentAPIPath+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
+	apiPath := fmt.Sprintf(c.ContentApiUrl+"/hubs/%[1]s/webhooks/%[2]s", c.HubID, webhookID)
 
-	response, err := amplience.AmplienceRequest(c, APIPath, http.MethodPatch, requestBody)
+	response, err := amplience.AmplienceRequest(c, apiPath, http.MethodPatch, requestBody)
 	if err != nil {
-		return nil, fmt.Errorf("unable to make PATCH request to %s: %w", APIPath, err)
+		return nil, fmt.Errorf("unable to make PATCH request to %s: %w", apiPath, err)
 	}
 
 	err = amplience.ParseAndUnmarshalAmplienceResponseBody(response, &webhook)

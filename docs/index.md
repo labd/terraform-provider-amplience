@@ -44,7 +44,7 @@ The provider will read these values from the environment:
 - `AMPLIENCE_CLIENT_ID`
 - `AMPLIENCE_CLIENT_SECRET`
 - `AMPLIENCE_HUB_ID`
-- `AMPLIENCE_CONTENT_API_PATH`
+- `AMPLIENCE_CONTENT_API_URL`
 
 #### Terraform Config
 In order to configure the provider directly set the following fields
@@ -53,7 +53,7 @@ provider "amplience" {
   client_id        = "<your client id>"
   client_secret    = "<your client secret>"
   hub_id           = "<your hub id"
-  content_api_path = "<your content api path>"
+  content_api_url = "<your content api url>"
 }
 ```
 
@@ -74,4 +74,4 @@ for more information.
 
 ### Optional
 
-- **content_api_path** (String) The base URL path for the Amplience Content API
+- **content_api_url** (String) The base URL path for the Amplience Content API

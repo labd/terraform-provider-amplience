@@ -18,7 +18,7 @@ type ClientConfig struct {
 	ID             string
 	Secret         string
 	HubID          string
-	ContentAPIPath string
+	ContentApiUrl string
 }
 
 // AmplienceRequest is a util func to abstract HTTP requests to the Amplience API which will be placeholders for a poc

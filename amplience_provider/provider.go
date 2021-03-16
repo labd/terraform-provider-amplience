@@ -35,10 +35,10 @@ func Provider() *schema.Provider {
 				Description: "The Hub ID of the Amplience Hub to use this provider instance with",
 				Sensitive:   false,
 			},
-			"content_api_path": {
+			"content_api_url": {
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("AMPLIENCE_CONTENT_API_PATH", "https://api.amplience.net/v2/content"),
+				DefaultFunc: schema.EnvDefaultFunc("AMPLIENCE_CONTENT_API_URL", "https://api.amplience.net/v2/content"),
 				Description: "The base URL path for the Amplience Content API",
 				Sensitive:   false,
 			},
@@ -68,13 +68,13 @@ func amplienceProviderConfigure(ctx context.Context, data *schema.ResourceData) 
 	if clientSecret == "" {
 		return nil, diag.FromErr(fmt.Errorf("client_secret is empty, can not instantiate provider"))
 	}
-	contentAPIPath := data.Get("content_api_path").(string)
+	contentApiUrl := data.Get("content_api_url").(string)
 
 	client := &amplience.ClientConfig{
 		ID:             clientID,
 		Secret:         clientSecret,
 		HubID:          hubID,
-		ContentAPIPath: contentAPIPath,
+		ContentApiUrl: contentApiUrl,
 	}
 	return client, diags
 }
