@@ -79,11 +79,11 @@ func amplienceProviderConfigure(ctx context.Context, data *schema.ResourceData) 
 	authUrl := data.Get("auth_url").(string)
 
 	client := &amplience.ClientConfig{
-		ID:             clientID,
-		Secret:         clientSecret,
-		HubID:          hubID,
-		ContentApiUrl:  contentApiUrl,
-		AuthUrl:        authUrl,
+		ID:            clientID,
+		Secret:        clientSecret,
+		HubID:         hubID,
+		ContentApiUrl: contentApiUrl,
+		AuthUrl:       authUrl,
 	}
 	return client, diags
 }

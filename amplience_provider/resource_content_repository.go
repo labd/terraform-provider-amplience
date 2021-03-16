@@ -26,8 +26,8 @@ func resourceContentRepository() *schema.Resource {
 		DeleteContext: resourceContentRepositoryDelete,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
 				ValidateFunc: validation.StringDoesNotContainAny(" "),
 			},
 			"label": {

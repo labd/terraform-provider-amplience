@@ -15,11 +15,11 @@ import (
 
 // Placeholder client struct to pass client info into meta
 type ClientConfig struct {
-	ID             string
-	Secret         string
-	HubID          string
-	ContentApiUrl  string
-	AuthUrl        string
+	ID            string
+	Secret        string
+	HubID         string
+	ContentApiUrl string
+	AuthUrl       string
 }
 
 // AmplienceRequest is a util func to abstract HTTP requests to the Amplience API which will be placeholders for a poc

@@ -66,8 +66,8 @@ func resourceWebhook() *schema.Resource {
 				MaxItems: 1,
 			},
 			"secret": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:      schema.TypeString,
+				Optional:  true,
 				Sensitive: true,
 			},
 			"header": {
@@ -212,7 +212,7 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 		data.Set("method", webhook.Method)
 		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
-		
+
 		// data.Set("header", flattenWebhookHeaders(&webhook.Headers))
 		// NOTE: We don't set 'headers' and 'notifications' here as their response can come back as nulls leading to a
 		// state difference. In order to avoid any mismatching state issues we set ForceNew to true for both fields
@@ -232,7 +232,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating webhook draft: %w", err))
 	}
-	
+
 	requestBody, err := json.Marshal(draft)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("could not marshal %v", draft))
@@ -251,7 +251,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 		data.Set("method", webhook.Method)
 		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
-		// NOTE: We don't read 'headers' and 'notifications' from the server response as it can come back as nulls 
+		// NOTE: We don't read 'headers' and 'notifications' from the server response as it can come back as nulls
 		// leading to a state difference.
 	}
 
