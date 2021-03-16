@@ -44,13 +44,11 @@ resource "amplience_webhook" "standard" {
   header {
     key = "X-Additional-Header"
     value = "abc123"
-    secret = false
   }
 
   header {
     key = "X-second-Header"
-    value = "321cba"
-    secret = true
+    secret_value = "321cba"
   }
 
   filter {
@@ -125,8 +123,11 @@ Required:
 Required:
 
 - **key** (String)
-- **secret** (Boolean)
+
+Optional:
+
 - **value** (String)
+- **secret_value** (String, Sensitive)
 
 
 <a id="nestedblock--notifications"></a>

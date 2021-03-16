@@ -81,11 +81,12 @@ func resourceWebhook() *schema.Resource {
 						},
 						"value": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
-						"secret": {
-							Type:     schema.TypeBool,
-							Required: true,
+						"secret_value": {
+							Type:      schema.TypeString,
+							Optional:  true,
+							Sensitive: true,
 						},
 					},
 				},
@@ -285,7 +286,10 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 func createWebhookDraft(data *schema.ResourceData) (*amplience.Webhook, error) {
 	notifications := resourceWebhookGetNotifications(data.Get("notifications"))
-	headers := resourceWebhookGetHeaders(data.Get("header"))
+	headers, err := resourceWebhookGetHeaders(data.Get("header"))
+	if err != nil {
+		return nil, fmt.Errorf("could not create webhook draft headers: %w", err)
+	}
 	filters, err := resourceWebhookGetFilters(data.Get("filter"))
 	if err != nil {
 		return nil, fmt.Errorf("could not create webhook draft filters: %w", err)
@@ -411,12 +415,13 @@ func resourceWebhookGetNotifications(input interface{}) []amplience.Notification
 	return result
 }
 
-func resourceWebhookGetHeaders(input interface{}) []amplience.WebhookHeader {
+func resourceWebhookGetHeaders(input interface{}) ([]amplience.WebhookHeader, error) {
 	inputSlice := input.([]interface{})
 	var result []amplience.WebhookHeader
 
 	for _, raw := range inputSlice {
 		i := raw.(map[string]interface{})
+		secret := false
 
 		key, ok := i["key"].(string)
 		if !ok {
@@ -426,9 +431,14 @@ func resourceWebhookGetHeaders(input interface{}) []amplience.WebhookHeader {
 		if !ok {
 			value = ""
 		}
-		secret, ok := i["secret"].(bool)
-		if !ok {
-			secret = false
+
+		if secretValue, ok := i["secret_value"].(string); ok && secretValue != "" {
+			value = secretValue
+			secret = true
+		}
+
+		if value == "" {
+			return nil, fmt.Errorf("Header does not have a value defined. Specify either value or secret_value")
 		}
 
 		result = append(result, amplience.WebhookHeader{
@@ -438,7 +448,7 @@ func resourceWebhookGetHeaders(input interface{}) []amplience.WebhookHeader {
 		})
 	}
 
-	return result
+	return result, nil
 }
 
 func resourceWebhookGetFilters(input interface{}) ([]amplience.WebhookFilter, error) {
@@ -579,8 +589,11 @@ func flattenWebhookHeaders(headers *[]amplience.WebhookHeader) []interface{} {
 			f := make(map[string]interface{})
 
 			f["key"] = header.Key
-			f["value"] = header.Value
-			f["secret"] = header.Secret
+			if header.Secret {
+				f["secret_value"] = header.Value
+			} else {
+				f["value"] = header.Value
+			}
 			fs[i] = f
 		}
 
