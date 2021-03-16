@@ -15,19 +15,3 @@ type ContentType struct {
 	HubContentTypeID string `json:"hubContentTypeId"`
 	ContentTypeURI   string `json:"contentTypeUri"`
 }
-
-// ContentRepositoryStatusEnum is an enum type
-type ContentRepositoryStatusEnum string
-
-// Enum values for ContentRepository status
-const (
-	ContentRepositoryStatusActive  ContentRepositoryStatusEnum = "ACTIVE"
-	ContentRepositoryStatusDeleted ContentRepositoryStatusEnum = "DELETED"
-)
-
-// Below should go somewhere more generic when/if more types are added
-type ResourceType string
-
-const (
-	TypeContent ResourceType = "CONTENT"
-)

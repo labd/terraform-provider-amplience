@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-// Placeholder client struct to pass client info into meta
+// Placeholder client configuration struct to pass client info into meta
 type ClientConfig struct {
 	ID            string
 	Secret        string

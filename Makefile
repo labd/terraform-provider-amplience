@@ -17,7 +17,7 @@ test:
 	go test -v ./... | grep -v 'PAUSE\|CONT'
 
 testacc:
- 	TF_ACC=1 go test -v ./...
+	TF_ACC=1 go test -v ./...
 
 deps:
 	go mod tidy

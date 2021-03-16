@@ -59,7 +59,7 @@ func Provider() *schema.Provider {
 }
 
 // amplienceProviderConfigure should instantiate an Amplience client from the env vars when a proper Amplience client
-// library is implemented. For now it just sets the values to a "client" struct for further use
+// library is implemented. For now it just sets the values to a "ClientConfig" struct for further use
 func amplienceProviderConfigure(ctx context.Context, data *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	hubID := data.Get("hub_id").(string)

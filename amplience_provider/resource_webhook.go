@@ -192,7 +192,7 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 	var diags diag.Diagnostics
 
 	webhookID := data.Id()
-	// Below to be replaced with client library function
+
 	webhook, err := getWebhookWithID(webhookID, meta)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error occurred when trying to get webhook with id %[1]s: %w",
@@ -213,11 +213,6 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 		data.Set("method", webhook.Method)
 		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
-
-		// data.Set("header", flattenWebhookHeaders(&webhook.Headers))
-		// NOTE: We don't set 'headers' and 'notifications' here as their response can come back as nulls leading to a
-		// state difference. In order to avoid any mismatching state issues we set ForceNew to true for both fields
-		// so a new resource is created if there are changes in either field
 	}
 	return diags
 }
@@ -252,8 +247,6 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 		data.Set("method", webhook.Method)
 		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
-		// NOTE: We don't read 'headers' and 'notifications' from the server response as it can come back as nulls
-		// leading to a state difference.
 	}
 
 	return diags
@@ -438,7 +431,7 @@ func resourceWebhookGetHeaders(input interface{}) ([]amplience.WebhookHeader, er
 		}
 
 		if value == "" {
-			return nil, fmt.Errorf("Header does not have a value defined. Specify either value or secret_value")
+			return nil, fmt.Errorf("header does not have a value defined. Specify either value or secret_value")
 		}
 
 		result = append(result, amplience.WebhookHeader{
@@ -581,30 +574,8 @@ func flattenWebhookFilters(filters *[]amplience.WebhookFilter) []interface{} {
 	return make([]interface{}, 0)
 }
 
-func flattenWebhookHeaders(headers *[]amplience.WebhookHeader) []interface{} {
-	if headers != nil {
-		fs := make([]interface{}, len(*headers), len(*headers))
-
-		for i, header := range *headers {
-			f := make(map[string]interface{})
-
-			f["key"] = header.Key
-			if header.Secret {
-				f["secret_value"] = header.Value
-			} else {
-				f["value"] = header.Value
-			}
-			fs[i] = f
-		}
-
-		return fs
-	}
-	return make([]interface{}, 0)
-}
-
 func flattenWebhookFilterArguments(arguments []amplience.RawArg, filterType string) interface{} {
-	// We know its a list of 2 elements of which the first has jsonPath and the second has its value so....
-	// TODO: cleam me up and everyrthign else
+	// We know it's a list of 2 elements. The first of which has the jsonPath and the second has its value so....
 	args := make([]interface{}, 1, 1)
 	argMap := make(map[string]interface{})
 	jsonPath := arguments[0].JSONPath
