@@ -68,6 +68,7 @@ func resourceWebhook() *schema.Resource {
 			"secret": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Sensitive: true,
 			},
 			"header": {
 				Type:     schema.TypeList,
