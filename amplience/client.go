@@ -18,7 +18,8 @@ type ClientConfig struct {
 	ID             string
 	Secret         string
 	HubID          string
-	ContentApiUrl string
+	ContentApiUrl  string
+	AuthUrl        string
 }
 
 // AmplienceRequest is a util func to abstract HTTP requests to the Amplience API which will be placeholders for a poc
@@ -87,14 +88,12 @@ func HandleAmplienceError(response *http.Response) *resource.RetryError {
 }
 
 func getAmplienceOAuthToken(config *ClientConfig) (string, error) {
-	authURL := "https://auth.adis.ws/oauth/token"
-	
 	data := url.Values{}
 	data.Set("client_id", config.ID)
 	data.Set("client_secret", config.Secret)
 	data.Set("grant_type", "client_credentials")
 
-	req, err := http.NewRequest(http.MethodPost, authURL, strings.NewReader(data.Encode()))
+	req, err := http.NewRequest(http.MethodPost, config.AuthUrl, strings.NewReader(data.Encode()))
 	if err != nil {
 		return "", fmt.Errorf("could not create request: %w", err)
 	}

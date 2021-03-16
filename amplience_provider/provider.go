@@ -42,6 +42,13 @@ func Provider() *schema.Provider {
 				Description: "The base URL path for the Amplience Content API",
 				Sensitive:   false,
 			},
+			"auth_url": {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("AMPLIENCE_AUTH_URL", "https://auth.adis.ws/oauth/token"),
+				Description: "The Amplience authentication URL",
+				Sensitive:   false,
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"amplience_content_repository": resourceContentRepository(),
@@ -69,12 +76,14 @@ func amplienceProviderConfigure(ctx context.Context, data *schema.ResourceData) 
 		return nil, diag.FromErr(fmt.Errorf("client_secret is empty, can not instantiate provider"))
 	}
 	contentApiUrl := data.Get("content_api_url").(string)
+	authUrl := data.Get("auth_url").(string)
 
 	client := &amplience.ClientConfig{
 		ID:             clientID,
 		Secret:         clientSecret,
 		HubID:          hubID,
-		ContentApiUrl: contentApiUrl,
+		ContentApiUrl:  contentApiUrl,
+		AuthUrl:        authUrl,
 	}
 	return client, diags
 }
