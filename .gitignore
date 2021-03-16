@@ -1,4 +1,4 @@
-terraform-provider-amplience
+terraform-provider-amplience_*
 *.backup
 /dist/*
 coverage.txt
