@@ -99,7 +99,7 @@ resource "amplience_webhook" "standard" {
 - **header** (Block List) (see [below for nested schema](#nestedblock--header))
 - **id** (String) The ID of this resource.
 - **notifications** (Block List, Max: 1) (see [below for nested schema](#nestedblock--notifications))
-- **secret** (String)
+- **secret** (String, Sensitive)
 
 <a id="nestedblock--filter"></a>
 ### Nested Schema for `filter`
