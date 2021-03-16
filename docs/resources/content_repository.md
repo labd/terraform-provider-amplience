@@ -28,7 +28,7 @@ and/or the [API documentation](https://amplience.com/docs/api/dynamic-content/ma
 ## Example Usage
 ```hcl
 resource "amplience_content_repository" "a-generic-content-repository" {
-  name = "a highly generic name"
+  name = "a-highly-generic-name"
   label = "a good identifying label"
 }
 ```
