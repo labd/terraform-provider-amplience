@@ -64,7 +64,6 @@ func resourceWebhook() *schema.Resource {
 				},
 				MinItems: 0,
 				MaxItems: 1,
-				ForceNew: true,
 			},
 			"secret": {
 				Type:     schema.TypeString,
@@ -89,7 +88,6 @@ func resourceWebhook() *schema.Resource {
 						},
 					},
 				},
-				ForceNew: true,
 			},
 			"filter": {
 				Type:     schema.TypeList,
@@ -209,11 +207,9 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 		data.Set("events", webhook.Events)
 		data.Set("handlers", webhook.Handlers)
 		data.Set("active", webhook.Active)
-
 		data.Set("secret", webhook.Secret)
-		filters := flattenWebhookFilters(&webhook.Filters)
-		data.Set("filter", filters)
 		data.Set("method", webhook.Method)
+		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
 
 		// NOTE: We don't set 'headers' and 'notifications' here as their response can come back as nulls leading to a
@@ -234,12 +230,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating webhook draft: %w", err))
 	}
-	// We force the creation of a new resource upon any change to headers or notifications due to their secret behaviour
-	// This function should not be called when there are changes to these fields but drop them from the draft to make
-	//doubly sure we avoid touching them in the PATCH request
-	draft.Headers = nil
-	draft.Notifications = nil
-
+	
 	requestBody, err := json.Marshal(draft)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("could not marshal %v", draft))
@@ -254,15 +245,12 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 		data.Set("events", webhook.Events)
 		data.Set("handlers", webhook.Handlers)
 		data.Set("active", webhook.Active)
-
 		data.Set("secret", webhook.Secret)
-		filters := flattenWebhookFilters(&webhook.Filters)
-		data.Set("filter", filters)
 		data.Set("method", webhook.Method)
+		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
-		// NOTE: We don't set 'headers' and 'notifications' here as their response can come back as nulls leading to a
-		// state difference. In order to avoid any mismatching state issues we set ForceNew to true for both fields
-		// so a new resource is created if there are changes in either field
+		// NOTE: We don't read 'headers' and 'notifications' from the server response as it can come back as nulls 
+		// leading to a state difference.
 	}
 
 	resourceWebhookRead(ctx, data, meta)
