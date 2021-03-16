@@ -211,7 +211,8 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 		data.Set("method", webhook.Method)
 		data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 		data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
-
+		
+		// data.Set("header", flattenWebhookHeaders(&webhook.Headers))
 		// NOTE: We don't set 'headers' and 'notifications' here as their response can come back as nulls leading to a
 		// state difference. In order to avoid any mismatching state issues we set ForceNew to true for both fields
 		// so a new resource is created if there are changes in either field
@@ -252,8 +253,6 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 		// NOTE: We don't read 'headers' and 'notifications' from the server response as it can come back as nulls 
 		// leading to a state difference.
 	}
-
-	resourceWebhookRead(ctx, data, meta)
 
 	return diags
 }
@@ -563,6 +562,24 @@ func flattenWebhookFilters(filters *[]amplience.WebhookFilter) []interface{} {
 
 			f["type"] = filter.Type
 			f["arguments"] = flattenWebhookFilterArguments(filter.Arguments, filter.Type)
+			fs[i] = f
+		}
+
+		return fs
+	}
+	return make([]interface{}, 0)
+}
+
+func flattenWebhookHeaders(headers *[]amplience.WebhookHeader) []interface{} {
+	if headers != nil {
+		fs := make([]interface{}, len(*headers), len(*headers))
+
+		for i, header := range *headers {
+			f := make(map[string]interface{})
+
+			f["key"] = header.Key
+			f["value"] = header.Value
+			f["secret"] = header.Secret
 			fs[i] = f
 		}
 
