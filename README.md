@@ -57,8 +57,7 @@ for more information about installing third-party providers.
 
 # Getting started
 
-[Read our documentation](https://readthedocs.org/projects/amplience-terraform-provider)
-and check out the [examples](https://amplience-terraform-provider.readthedocs.io/en/latest/examples/).
+[Read our documentation](https://registry.terraform.io/providers/labd/amplience/latest/docs).
 
 # Contributing
 
