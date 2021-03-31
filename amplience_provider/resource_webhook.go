@@ -173,7 +173,7 @@ func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta 
 	if errorResponse != nil {
 		return diag.FromErr(fmt.Errorf("received error from request, could not create webhook for draft %v.\n"+
 			"Status Code: %d\n"+
-			"Error Message: %s", draft, response.StatusCode, response.Status))
+			"Error Message: %s", draft, response.StatusCode, errorResponse.Error()))
 	}
 
 	if response == nil {
@@ -233,7 +233,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 
 	requestBody, err := json.Marshal(draft)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("could not marshal %v", draft))
+		return diag.FromErr(fmt.Errorf("could not marshal %v: %w", draft, err))
 	}
 
 	webhook, err := updateWebhookWithID(webhookID, bytes.NewBuffer(requestBody), meta)
@@ -262,7 +262,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 	webhook, err := getWebhookWithID(webhookID, meta)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("could not get Webhook with ID %s for Hub %s", webhookID, c.HubID))
+		return diag.FromErr(fmt.Errorf("could not get Webhook with ID %s for Hub %s: %w", webhookID, c.HubID, err))
 	}
 	if webhook == nil {
 		diags = append(diags, diag.Diagnostic{
@@ -274,7 +274,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 	err = deleteWebhookWithID(webhookID, meta)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("could not delete Webhook with ID %s", webhookID))
+		return diag.FromErr(fmt.Errorf("could not delete Webhook with ID %s: %w", webhookID, err))
 	}
 	return diags
 }
