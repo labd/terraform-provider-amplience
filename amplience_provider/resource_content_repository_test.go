@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -17,7 +15,7 @@ func TestAccContentRepository_CreateAndUpdate(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckContentRepositoryDestroy,
+		CheckDestroy: nil,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContentRepositoryConfig(name, label),
@@ -52,9 +50,4 @@ func testAccContentRepositoryConfig(name, label string) string {
       label = "%[2]s"
     }
 `, name, label)
-}
-
-func testAccCheckContentRepositoryDestroy(state *terraform.State) error {
-	//TODO: Implement
-	return nil
 }

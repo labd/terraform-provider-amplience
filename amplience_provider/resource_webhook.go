@@ -344,6 +344,9 @@ func getWebhookWithID(webhookID string, meta interface{}) (*amplience.Webhook, e
 	if err != nil {
 		return nil, fmt.Errorf("unable to make GET request to %s: %w", apiPath, err)
 	}
+	if response.StatusCode != 200 && response.StatusCode != 204 {
+		return nil, fmt.Errorf("request returned error with code %d: %v", response.StatusCode, response.Body)
+	}
 	err = amplience.ParseAndUnmarshalAmplienceResponseBody(response, &webhook)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing response body into webhook struct: %w", err)

@@ -2,7 +2,10 @@ package amplience_provider
 
 import (
 	"fmt"
+	"strings"
 	"testing"
+
+	"github.com/labd/terraform-provider-amplience/amplience"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -267,7 +270,22 @@ func testAccWebhookUpdate(label string) string {
 
 }
 
-// TODO: Implement
 func testAccWebhooksDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "amplience_webhook" {
+			continue
+		}
+		response, err := getWebhookWithID(rs.Primary.ID, testAccProvider.Meta().(*amplience.ClientConfig))
+		if err == nil {
+			if response != nil && response.ID == rs.Primary.ID {
+				return fmt.Errorf("webhook (%s) still exists", rs.Primary.ID)
+			}
+			return nil
+		}
+		// If we don't get a was not found error, return the actual error. Otherwise resource is destroyed
+		if !strings.Contains(err.Error(), "was not found") && !strings.Contains(err.Error(), "Not Found (404)") {
+			return err
+		}
+	}
 	return nil
 }
