@@ -21,19 +21,19 @@ const (
 )
 
 type Webhook struct {
-	ID               string               `json:"id,omitempty"`
-	Label            string               `json:"label"`
-	Events           []string             `json:"events"`
-	Handlers         []string             `json:"handlers"`
-	Active           bool                 `json:"active"`
-	Notifications    []Notification       `json:"notifications"`
-	Secret           string               `json:"secret"`
-	CreatedDate      *time.Time           `json:"createdDate,omitempty"`
-	LastModifiedDate *time.Time           `json:"lastModifiedDate,omitempty"`
-	Headers          []WebhookHeader      `json:"headers,omitempty"`
-	Filters          []WebhookFilter      `json:"filters,omitempty"`
-	Method           string               `json:"method"`
-	CustomPayload    WebhookCustomPayload `json:"customPayload,omitempty"`
+	ID               string                `json:"id,omitempty"`
+	Label            string                `json:"label"`
+	Events           []string              `json:"events"`
+	Handlers         []string              `json:"handlers"`
+	Active           bool                  `json:"active"`
+	Notifications    []Notification        `json:"notifications"`
+	Secret           string                `json:"secret"`
+	CreatedDate      *time.Time            `json:"createdDate,omitempty"`
+	LastModifiedDate *time.Time            `json:"lastModifiedDate,omitempty"`
+	Headers          []WebhookHeader       `json:"headers,omitempty"`
+	Filters          []WebhookFilter       `json:"filters,omitempty"`
+	Method           string                `json:"method"`
+	CustomPayload    *WebhookCustomPayload `json:"customPayload,omitempty"`
 }
 
 type Notification struct {
