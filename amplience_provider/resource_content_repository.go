@@ -100,7 +100,9 @@ func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceD
 	})
 
 	if errorResponse != nil {
-		return diag.FromErr(errorResponse)
+		return diag.FromErr(fmt.Errorf("received error from request, could not create content repository for draft %v.\n"+
+			"Status Code: %d\n"+
+			"Error Message: %s", draft, response.StatusCode, errorResponse.Error()))
 	}
 
 	if response == nil {

@@ -171,7 +171,9 @@ func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta 
 	})
 
 	if errorResponse != nil {
-		return diag.FromErr(fmt.Errorf("received error from request, could not create webhook for draft %v", draft))
+		return diag.FromErr(fmt.Errorf("received error from request, could not create webhook for draft %v.\n"+
+			"Status Code: %d\n"+
+			"Error Message: %s", draft, response.StatusCode, errorResponse.Error()))
 	}
 
 	if response == nil {
@@ -231,7 +233,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 
 	requestBody, err := json.Marshal(draft)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("could not marshal %v", draft))
+		return diag.FromErr(fmt.Errorf("could not marshal %v: %w", draft, err))
 	}
 
 	webhook, err := updateWebhookWithID(webhookID, bytes.NewBuffer(requestBody), meta)
@@ -260,7 +262,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 	webhook, err := getWebhookWithID(webhookID, meta)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("could not get Webhook with ID %s for Hub %s", webhookID, c.HubID))
+		return diag.FromErr(fmt.Errorf("could not get Webhook with ID %s for Hub %s: %w", webhookID, c.HubID, err))
 	}
 	if webhook == nil {
 		diags = append(diags, diag.Diagnostic{
@@ -272,7 +274,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 	err = deleteWebhookWithID(webhookID, meta)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("could not delete Webhook with ID %s", webhookID))
+		return diag.FromErr(fmt.Errorf("could not delete Webhook with ID %s: %w", webhookID, err))
 	}
 	return diags
 }
@@ -327,7 +329,7 @@ func createWebhookDraft(data *schema.ResourceData) (*amplience.Webhook, error) {
 		Headers:       headers,
 		Filters:       filters,
 		Method:        data.Get("method").(string),
-		CustomPayload: *customPayload,
+		CustomPayload: customPayload,
 	}
 	return draft, nil
 }
@@ -553,6 +555,10 @@ func resourceWebhookGetCustomPayloadAndValidate(input interface{}) (*amplience.W
 			return nil, fmt.Errorf("unknown key %s in custom payload field", key)
 		}
 	}
+	// If payload is empty, return nil
+	if (payload == amplience.WebhookCustomPayload{}) {
+		return nil, nil
+	}
 
 	return &payload, nil
 }
@@ -591,9 +597,12 @@ func flattenWebhookFilterArguments(arguments []amplience.RawArg, filterType stri
 	return args
 }
 
-func convertCustomPayloadToMap(payload amplience.WebhookCustomPayload) map[string]string {
-	return map[string]string{
-		"type":  payload.Type,
-		"value": payload.Value,
+func convertCustomPayloadToMap(payload *amplience.WebhookCustomPayload) map[string]string {
+	if payload != nil {
+		return map[string]string{
+			"type":  payload.Type,
+			"value": payload.Value,
+		}
 	}
+	return nil
 }
