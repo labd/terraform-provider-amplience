@@ -77,7 +77,10 @@ func ParseAndUnmarshalAmplienceResponseBody(response *http.Response, data interf
 
 // https://amplience.com/docs/api/dynamic-content/management/index.html#section/Usage/Status-Code-Table
 func HandleAmplienceError(response *http.Response) *resource.RetryError {
-	errResponseBody := ErrorResponseBody{}
+	if response == nil {
+		return resource.NonRetryableError(fmt.Errorf("received nil response, unable to handle error"))
+	}
+	errResponseBody := ErrorResponse{}
 	switch response.StatusCode {
 	case http.StatusOK, http.StatusCreated, http.StatusAccepted, http.StatusNoContent:
 		return nil
@@ -87,7 +90,10 @@ func HandleAmplienceError(response *http.Response) *resource.RetryError {
 			return resource.NonRetryableError(fmt.Errorf("could not read error response body: %w", err))
 		}
 		err = json.Unmarshal(data, &errResponseBody)
-		return resource.RetryableError(fmt.Errorf("retryable error with code %d received: %s\n"+
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("could not unmarshal error response body: %w", err))
+		}
+		return resource.RetryableError(fmt.Errorf("retryable error with code %d received: %s\n "+
 			"Amplience Error Response: %s", response.StatusCode, response.Status, StringFormatObject(errResponseBody)))
 	default:
 		data, err := ioutil.ReadAll(response.Body)
@@ -95,7 +101,10 @@ func HandleAmplienceError(response *http.Response) *resource.RetryError {
 			return resource.NonRetryableError(fmt.Errorf("could not read error response body: %w", err))
 		}
 		err = json.Unmarshal(data, &errResponseBody)
-		return resource.NonRetryableError(fmt.Errorf("non retryable error with code %d received: %s\n"+
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("could not unmarshal error response body: %w", err))
+		}
+		return resource.NonRetryableError(fmt.Errorf("non retryable error with code %d received: %s\n "+
 			"Amplience Error Response: %s", response.StatusCode, response.Status, StringFormatObject(errResponseBody)))
 	}
 }
@@ -141,11 +150,15 @@ type authResponseBody struct {
 	ExpiresIn        int    `json:"expires_in"`
 }
 
-type ErrorResponseBody struct {
+type ErrorResponseItem struct {
 	Level        string `json:"level"`
 	Code         string `json:"code"`
 	Message      string `json:"message"`
 	Property     string `json:"property"`
 	Entity       string `json:"entity"`
 	InvalidValue string `json:"invalidValue"`
+}
+
+type ErrorResponse struct {
+	Errors []ErrorResponseItem `json:"errors"`
 }
