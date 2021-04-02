@@ -21,9 +21,9 @@ jobs:
       - name: Install dependencies
         run: go get ./amplience_provider
       - name: Run tests
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=./amplience_provider -v ./amplience_provider
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
         env:
-          TF_ACC: 1
+          TF_ACC: 0
           AMPLIENCE_CLIENT_ID: ${{ secrets.AMPLIENCE_CLIENT_ID }}
           AMPLIENCE_CLIENT_SECRET: ${{ secrets.AMPLIENCE_CLIENT_SECRET }}
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
