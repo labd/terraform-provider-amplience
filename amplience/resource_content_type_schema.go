@@ -49,7 +49,7 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 	input := content.ContentTypeSchemaInput{
 		SchemaID:        data.Get("schema_id").(string),
 		Body:            data.Get("body").(string),
-		ValidationLevel: data.Get("Validation_level").(string),
+		ValidationLevel: data.Get("validation_level").(string),
 	}
 
 	schema, err := c.ContentTypeSchemaCreate(hub_id, input)
@@ -66,7 +66,8 @@ func resourceContentTypeSchemaRead(ctx context.Context, data *schema.ResourceDat
 	var diags diag.Diagnostics
 	c := meta.(*content.Client)
 
-	hub_id, schema_id := parseID(data.Id())
+	schema_id := data.Id()
+	hub_id := data.Get("hub_id").(string)
 
 	schema, err := c.ContentTypeSchemaGet(schema_id)
 	if err != nil {
@@ -81,8 +82,8 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 	var diags diag.Diagnostics
 	c := meta.(*content.Client)
 
-	hub_id, schema_id := parseID(data.Id())
-
+	schema_id := data.Id()
+	hub_id := data.Get("hub_id").(string)
 	if data.HasChange("body") || data.HasChange("validation_level") {
 		current, err := c.ContentTypeSchemaGet(schema_id)
 		if err != nil {
@@ -92,7 +93,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 		input := content.ContentTypeSchemaInput{
 			SchemaID:        data.Get("schema_id").(string),
 			Body:            data.Get("body").(string),
-			ValidationLevel: data.Get("Validation_level").(string),
+			ValidationLevel: data.Get("validation_level").(string),
 		}
 
 		schema, err := c.ContentTypeSchemaUpdate(current, input)
@@ -114,7 +115,8 @@ func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceD
 }
 
 func resourceContentTypeSchemaSaveState(data *schema.ResourceData, hub_id string, resource content.ContentTypeSchema) {
-	data.SetId(createID(hub_id, resource.ID))
+	data.SetId(resource.ID)
+	data.Set("hub_id", hub_id)
 	data.Set("schema_id", resource.SchemaID)
 	data.Set("body", resource.Body)
 	data.Set("validation_level", resource.ValidationLevel)

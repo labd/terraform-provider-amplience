@@ -50,7 +50,8 @@ func Provider() *schema.Provider {
 			"amplience_webhook":                 resourceWebhook(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"amplience_hub": dataSourceHub(),
+			"amplience_hub":                dataSourceHub(),
+			"amplience_content_repository": dataSourceContentRepository(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

@@ -59,8 +59,8 @@ func resourceContentTypeRead(ctx context.Context, data *schema.ResourceData, met
 	var diags diag.Diagnostics
 	c := meta.(*content.Client)
 
-	hub_id, content_type_id := parseID(data.Id())
-
+	content_type_id := data.Id()
+	hub_id := data.Get("hub_id").(string)
 	content_type, err := c.ContentTypeGet(content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
@@ -74,7 +74,8 @@ func resourceContentTypeUpdate(ctx context.Context, data *schema.ResourceData, m
 	var diags diag.Diagnostics
 	c := meta.(*content.Client)
 
-	hub_id, content_type_id := parseID(data.Id())
+	content_type_id := data.Id()
+	hub_id := data.Get("hub_id").(string)
 
 	if data.HasChange("body") || data.HasChange("validation_level") {
 		current, err := c.ContentTypeGet(content_type_id)
@@ -102,10 +103,11 @@ func resourceContentTypeDelete(ctx context.Context, data *schema.ResourceData, m
 }
 
 func resourceContentTypeSaveState(data *schema.ResourceData, hub_id string, resource content.ContentType) {
-	data.SetId(createID(hub_id, resource.ID))
+	data.SetId(resource.ID)
 	data.Set("content_type_uri", resource.ContentTypeURI)
 	data.Set("status", resource.Status)
 	data.Set("label", resource.Settings.Label)
+	data.Set("hub_id", hub_id)
 }
 
 func resourceContentTypeCreateInput(data *schema.ResourceData) content.ContentTypeInput {
