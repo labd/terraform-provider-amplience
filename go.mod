@@ -2,8 +2,6 @@ module github.com/labd/terraform-provider-amplience
 
 go 1.15
 
-replace github.com/labd/amplience-go-sdk => /Users/mvantellingen/projects/labdigital/amplience-go-sdk
-
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/davecgh/go-spew v1.1.1
@@ -17,7 +15,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.9.1 // indirect
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/hashicorp/yamux v0.0.0-20210316155119-a95892c5f864 // indirect
-	github.com/labd/amplience-go-sdk v0.0.0-20210418125821-4b59b49e5d04
+	github.com/labd/amplience-go-sdk v0.0.0-20210418155423-ee34eaa9a03a
 	github.com/mitchellh/copystructure v1.1.2 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect

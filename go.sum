@@ -266,6 +266,8 @@ github.com/labd/amplience-go-sdk v0.0.0-20210417163432-877c0ff03091 h1:HJcZdQ+ac
 github.com/labd/amplience-go-sdk v0.0.0-20210417163432-877c0ff03091/go.mod h1:A6Hv5OeNhf3rYMiBq4DcVRqndRsDWtOpTucYhq0MDZA=
 github.com/labd/amplience-go-sdk v0.0.0-20210418125821-4b59b49e5d04 h1:gOUZKxrciTua9QbE1ZPcV7pQjKWMr33zZ4mm4XfWuAI=
 github.com/labd/amplience-go-sdk v0.0.0-20210418125821-4b59b49e5d04/go.mod h1:A6Hv5OeNhf3rYMiBq4DcVRqndRsDWtOpTucYhq0MDZA=
+github.com/labd/amplience-go-sdk v0.0.0-20210418155423-ee34eaa9a03a h1:skafSL21rpm0LbVgePhDKdZ04Jy3D2ljoS28VyZ3gKA=
+github.com/labd/amplience-go-sdk v0.0.0-20210418155423-ee34eaa9a03a/go.mod h1:A6Hv5OeNhf3rYMiBq4DcVRqndRsDWtOpTucYhq0MDZA=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
 github.com/mattn/go-colorable v0.1.4 h1:snbPLB8fVfU9iwbbo30TPtbLRzwWu6aJS6Xh4eaaviA=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
