@@ -1,13 +1,12 @@
-package amplience_provider
+package amplience
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/labd/terraform-provider-amplience/amplience"
-
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/labd/amplience-go-sdk/content"
 )
 
 // Provider -
@@ -28,13 +27,6 @@ func Provider() *schema.Provider {
 				Description: "The OAuth Client Secret for Amplience management API. https://amplience_provider.com/docs/api/dynamic-content/management/index.html#section/Authentication",
 				Sensitive:   true,
 			},
-			"hub_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("AMPLIENCE_HUB_ID", nil),
-				Description: "The Hub ID of the Amplience Hub to use this provider instance with",
-				Sensitive:   false,
-			},
 			"content_api_url": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -51,39 +43,40 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"amplience_content_repository": resourceContentRepository(),
-			"amplience_webhook":            resourceWebhook(),
+			"amplience_content_repository":      resourceContentRepository(),
+			"amplience_content_type":            resourceContentType(),
+			"amplience_content_type_assignment": resourceContentTypeAssignment(),
+			"amplience_content_type_schema":     resourceContentTypeSchema(),
+			"amplience_webhook":                 resourceWebhook(),
 		},
-		ConfigureContextFunc: amplienceProviderConfigure,
+		DataSourcesMap: map[string]*schema.Resource{
+			"amplience_hub": dataSourceHub(),
+		},
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-// amplienceProviderConfigure should instantiate an Amplience client from the env vars when a proper Amplience client
-// library is implemented. For now it just sets the values to a "ClientConfig" struct for further use
-func amplienceProviderConfigure(ctx context.Context, data *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	clientID := d.Get("client_id").(string)
+	clientSecret := d.Get("client_secret").(string)
+	apiURL := d.Get("content_api_url").(string)
+	authURL := d.Get("auth_url").(string)
+
 	var diags diag.Diagnostics
-	hubID := data.Get("hub_id").(string)
-	if hubID == "" {
-		return nil, diag.FromErr(fmt.Errorf("hub_id is empty, can not instantiate provider"))
+
+	// FIXME: pass context to amplience sdk client
+	spew.Dump(clientID)
+	spew.Dump(clientSecret)
+
+	client, err := content.NewClient(&content.ClientConfig{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		URL:          apiURL,
+		AuthURL:      authURL,
+	})
+	if err != nil {
+		return nil, diag.FromErr(err)
 	}
 
-	clientID := data.Get("client_id").(string)
-	if clientID == "" {
-		return nil, diag.FromErr(fmt.Errorf("client_id is empty, can not instantiate provider"))
-	}
-	clientSecret := data.Get("client_secret").(string)
-	if clientSecret == "" {
-		return nil, diag.FromErr(fmt.Errorf("client_secret is empty, can not instantiate provider"))
-	}
-	contentApiUrl := data.Get("content_api_url").(string)
-	authUrl := data.Get("auth_url").(string)
-
-	client := &amplience.ClientConfig{
-		ID:            clientID,
-		Secret:        clientSecret,
-		HubID:         hubID,
-		ContentApiUrl: contentApiUrl,
-		AuthUrl:       authUrl,
-	}
 	return client, diags
 }

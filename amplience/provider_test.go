@@ -1,4 +1,4 @@
-package amplience_provider
+package amplience
 
 import (
 	"context"

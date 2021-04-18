@@ -1,4 +1,4 @@
-package amplience_provider
+package amplience
 
 import (
 	"fmt"
@@ -156,6 +156,7 @@ func testAccWebhooksConfig(label string) string {
 	return fmt.Sprintf(`
 	resource "amplience_webhook" "standard" {
       label = "%[1]s"
+	  hub_id = "foobar"
 
       events = [
 		"dynamic-content.content-item.created",
@@ -173,7 +174,7 @@ func testAccWebhooksConfig(label string) string {
        key = "X-Additional-Header"
        value = "abc123"
       }
-	  
+
       header {
        key = "X-second-Header"
        secret_value = "321cba"
@@ -186,7 +187,7 @@ func testAccWebhooksConfig(label string) string {
          value = ["abc"]
        }
       }
-      
+
       filter {
        type = "in"
        arguments {
@@ -234,7 +235,7 @@ func testAccWebhookUpdate(label string) string {
        key = "X-Additional-Header"
        value = "abc123"
       }
-	  
+
       header {
        key = "X-second-Header"
        secret_value = "321cba"
@@ -247,7 +248,7 @@ func testAccWebhookUpdate(label string) string {
          value = ["123"]
        }
       }
-      
+
       filter {
        type = "in"
        arguments {

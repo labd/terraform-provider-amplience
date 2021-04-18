@@ -4,13 +4,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	"github.com/labd/terraform-provider-amplience/amplience_provider"
+	"github.com/labd/terraform-provider-amplience/amplience"
 )
 
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		ProviderFunc: func() *schema.Provider {
-			return amplience_provider.Provider()
+			return amplience.Provider()
 		},
 	})
 }
