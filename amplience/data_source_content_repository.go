@@ -3,6 +3,7 @@ package amplience
 import (
 	"context"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/labd/amplience-go-sdk/content"
 
@@ -18,6 +19,18 @@ func dataSourceContentRepository() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
+			},
+			"label": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"hub_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -38,9 +51,11 @@ func dataSourceContentRepositoryRead(ctx context.Context, data *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
+	spew.Dump(repository)
+
 	data.SetId(repository.ID)
-	data.Set("name", repository.Name)
 	data.Set("label", repository.Label)
 	data.Set("hub_id", hub.ID)
+	data.Set("name", repository.Name)
 	return diags
 }

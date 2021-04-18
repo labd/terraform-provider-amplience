@@ -133,6 +133,15 @@ func resourceContentTypeUpdate(ctx context.Context, data *schema.ResourceData, m
 // The amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
 func resourceContentTypeDelete(ctx context.Context, data *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	c := m.(*content.Client)
+
+	id := data.Id()
+
+	_, err := c.ContentTypeArchive(id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	data.SetId("")
 	return diags
 }

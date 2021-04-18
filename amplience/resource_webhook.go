@@ -208,7 +208,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 	hub_id, webhook_id := parseID(data.Id())
 
-	_, err := c.WebhookDelete(hub_id, webhook_id)
+	err := c.WebhookDelete(hub_id, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

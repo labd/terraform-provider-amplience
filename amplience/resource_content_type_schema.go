@@ -37,6 +37,10 @@ func resourceContentTypeSchema() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"version": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -110,6 +114,16 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 // The amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
 func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	c := m.(*content.Client)
+
+	id := data.Id()
+	version := data.Get("version").(int)
+
+	_, err := c.ContentTypeSchemaArchive(id, version)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	data.SetId("")
 	return diags
 }
@@ -120,4 +134,5 @@ func resourceContentTypeSchemaSaveState(data *schema.ResourceData, hub_id string
 	data.Set("schema_id", resource.SchemaID)
 	data.Set("body", resource.Body)
 	data.Set("validation_level", resource.ValidationLevel)
+	data.Set("version", resource.Version)
 }
