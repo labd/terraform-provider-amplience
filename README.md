@@ -10,14 +10,14 @@ One provider can manage the resource of one HubID
 Currently the checked resources are supported. Support for additional resources will come when they are required in projects, or contributed.
 
 - [ ] Administration
-- [ ] Content Items
+- [x] Content Items
 - [x] Content Repositories
-- [ ] Content Types
+- [x] Content Types
 - [ ] Editions
 - [ ] Events
-- [ ] Extensions
-- [ ] Folders
-- [ ] Hubs
+- [x] Extensions
+- [x] Folders
+- [x] Hubs
 - [ ] Localization
 - [ ] Integrations
 - [ ] Publishing Jobs
@@ -137,9 +137,6 @@ git push --follow-tags
 ```
 
 ## TODO List 
-- Currently this repository contains a minimal `amplience` package to call the Amplience API with. However one of the first things 
-that should be improved for this project is that a proper Amplience Client Library should be set up
-- The above Client Library should implement support for multiple Hubs in a clear and logical manner (1 Hub = 1 Provider)
 - Unit/acceptance tests should be expanded
 - It would be nice to have a Mock Amplience server to run (non-acceptance) tests against
 - The above tests can then be made to run on push through a Github Action
