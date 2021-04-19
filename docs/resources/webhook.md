@@ -3,12 +3,14 @@
 page_title: "amplience_webhook Resource - terraform-provider-amplience"
 subcategory: ""
 description: |-
-  
+  A webhook is a way for Dynamic Content to automatically send messages or data to a third party system. Developers create webhooks that are triggered by specified events in Dynamic Content. These events usually correspond to an action performed by the user such as creating or updating content, or scheduling editions. Webhooks are associated with a single Dynamic Content hub.
+  For more info see Amplience Webhook Docs https://amplience.com/docs/integration/webhooks.html
 ---
 
 # amplience_webhook (Resource)
 
-
+A webhook is a way for Dynamic Content to automatically send messages or data to a third party system. Developers create webhooks that are triggered by specified events in Dynamic Content. These events usually correspond to an action performed by the user such as creating or updating content, or scheduling editions. Webhooks are associated with a single Dynamic Content hub.
+For more info see [Amplience Webhook Docs](https://amplience.com/docs/integration/webhooks.html)
 
 
 
@@ -17,21 +19,21 @@ description: |-
 
 ### Required
 
-- **hub_id** (String)
-- **label** (String)
-- **method** (String)
+- **hub_id** (String) ID of the Hub the Webhook is in
+- **label** (String) Label for the Webhook
+- **method** (String) Webhook HTTP method: POST, PATCH, PUT or DELETE
 
 ### Optional
 
-- **active** (Boolean)
+- **active** (Boolean) Indicates if the Webhook should be fired
 - **custom_payload** (Map of String)
-- **events** (List of String)
+- **events** (List of String) List of events to register the Webhook against
 - **filter** (Block List, Max: 10) (see [below for nested schema](#nestedblock--filter))
-- **handlers** (List of String)
-- **header** (Block List) (see [below for nested schema](#nestedblock--header))
+- **handlers** (List of String) List of URLs to receive the Webhook
+- **header** (Block List) List of additional headers (see [below for nested schema](#nestedblock--header))
 - **id** (String) The ID of this resource.
-- **notifications** (Block List, Max: 1) (see [below for nested schema](#nestedblock--notifications))
-- **secret** (String, Sensitive)
+- **notifications** (Block List, Max: 1) List of notifications (see [below for nested schema](#nestedblock--notifications))
+- **secret** (String, Sensitive) Shared secret between the handler and DC
 
 <a id="nestedblock--filter"></a>
 ### Nested Schema for `filter`
@@ -39,15 +41,15 @@ description: |-
 Required:
 
 - **arguments** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--filter--arguments))
-- **type** (String)
+- **type** (String) Specify whether the filter is an "in" or an "equal" filter
 
 <a id="nestedblock--filter--arguments"></a>
 ### Nested Schema for `filter.arguments`
 
 Required:
 
-- **json_path** (String)
-- **value** (List of String)
+- **json_path** (String) JSON Path of the filed you wish to match
+- **value** (List of String) The value to compare too
 
 
 
@@ -56,12 +58,12 @@ Required:
 
 Required:
 
-- **key** (String)
+- **key** (String) Header key
 
 Optional:
 
-- **secret_value** (String, Sensitive)
-- **value** (String)
+- **secret_value** (String, Sensitive) Indicates whether this header value is sensitive
+- **value** (String) Header value
 
 
 <a id="nestedblock--notifications"></a>
@@ -69,6 +71,6 @@ Optional:
 
 Required:
 
-- **email** (String)
+- **email** (String) email address to notify
 
 

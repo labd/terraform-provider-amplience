@@ -12,12 +12,18 @@ import (
 
 func resourceContentType() *schema.Resource {
 	return &schema.Resource{
+		Description: "Content types are the templates for content items, defining the type of content to be created, " +
+			"including its structure and validation rules. Content types are stored externally to Dynamic Content, " +
+			"on web based services such as AWS, and must be registered with a hub before they can be used to create " +
+			"content.\n" +
+			"For more info see [Amplience Content Type Docs](https://amplience.com/docs/integration/workingwithcontenttypes.html)",
 		CreateContext: resourceContentTypeCreate,
 		ReadContext:   resourceContentTypeRead,
 		UpdateContext: resourceContentTypeUpdate,
 		DeleteContext: resourceContentTypeDelete,
 		Schema: map[string]*schema.Schema{
 			"hub_id": {
+				Description:      "ID of the Hub the Content Type should be registered to",
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
@@ -28,8 +34,9 @@ func resourceContentType() *schema.Resource {
 				Required: true,
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Status of the Content Type. Can be ACTIVE or DELETED",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"label": {
 				Type:     schema.TypeString,

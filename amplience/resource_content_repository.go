@@ -12,6 +12,13 @@ import (
 
 func resourceContentRepository() *schema.Resource {
 	return &schema.Resource{
+		Description: "Content Repositories function as subfolders inside of Hubs. Although a user can view content in " +
+			"all repositories within a single hub, their ability to create content may be limited to certain " +
+			"repositories. Typically you will want your content producers to be able to create content in one or more " +
+			"repositories, but your planners to only be able to view the content. Content and slot types are registered " +
+			"with hubs and enabled on repositories. So you can choose which types of content can be created in each " +
+			"repository, or just choose to limit the number of content types that are available.\n" +
+			"For more info see [Amplience Hubs & Repositories Docs](https://amplience.com/docs/intro/hubsandrepositories.html)",
 		CreateContext: resourceContentRepositoryCreate,
 		ReadContext:   resourceContentRepositoryRead,
 		UpdateContext: resourceContentRepositoryUpdate,

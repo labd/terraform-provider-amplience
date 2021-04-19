@@ -11,19 +11,22 @@ import (
 
 func resourceContentTypeAssignment() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Resource used to assign a Content Type to a Content Repository",
 		CreateContext: resourceContentTypeAssignmentCreate,
 		ReadContext:   resourceContentTypeAssignmentRead,
 		DeleteContext: resourceContentTypeAssignmentDelete,
 		Schema: map[string]*schema.Schema{
 			"repository_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "ID of the Content Repository to assign the type to",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"content_type_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "ID of the Content Type to assign to the Repository",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 		},
 	}

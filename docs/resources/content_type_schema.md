@@ -3,12 +3,14 @@
 page_title: "amplience_content_type_schema Resource - terraform-provider-amplience"
 subcategory: ""
 description: |-
-  
+  Content type schemas are JSON schemas that define a type of content to be created, including its structure, format and validation rules. In Dynamic Content, content type schemas match the format of the JSON Schema standard, with a few extensions and some keywords that are not supported.
+  For more info see Amplience Content Type Schema Docs https://amplience.com/docs/integration/contenttypes.html
 ---
 
 # amplience_content_type_schema (Resource)
 
-
+Content type schemas are JSON schemas that define a type of content to be created, including its structure, format and validation rules. In Dynamic Content, content type schemas match the format of the JSON Schema standard, with a few extensions and some keywords that are not supported.
+For more info see [Amplience Content Type Schema Docs](https://amplience.com/docs/integration/contenttypes.html)
 
 
 

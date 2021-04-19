@@ -13,6 +13,11 @@ import (
 
 func resourceWebhook() *schema.Resource {
 	return &schema.Resource{
+		Description: "A webhook is a way for Dynamic Content to automatically send messages or data to a third party " +
+			"system. Developers create webhooks that are triggered by specified events in Dynamic Content. These events " +
+			"usually correspond to an action performed by the user such as creating or updating content, or " +
+			"scheduling editions. Webhooks are associated with a single Dynamic Content hub.\n" +
+			"For more info see [Amplience Webhook Docs](https://amplience.com/docs/integration/webhooks.html)",
 		CreateContext: resourceWebhookCreate,
 		ReadContext:   resourceWebhookRead,
 		UpdateContext: resourceWebhookUpdate,
@@ -22,42 +27,49 @@ func resourceWebhook() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"hub_id": {
+				Description:      "ID of the Hub the Webhook is in",
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
 				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
 			},
 			"label": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Label for the Webhook",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"events": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MinItems: 1,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: "List of events to register the Webhook against",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MinItems:    1,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"handlers": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MinItems: 1,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: "List of URLs to receive the Webhook",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MinItems:    1,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Indicates if the Webhook should be fired",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			// notifications is defined as an Array of objects in the API docs though it doesn't allow for more than
 			// 1 element, throwing a "Cannot exceed the maximum of 1 notification" error if you add more so setting max
 			// elements to 1
 			"notifications": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Description: "List of notifications",
+				Type:        schema.TypeList,
+				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "email address to notify",
+							Type:        schema.TypeString,
+							Required:    true,
 							// TODO: Add email validation func ValidateDiagFunc:
 						},
 					},
@@ -66,27 +78,32 @@ func resourceWebhook() *schema.Resource {
 				MaxItems: 1,
 			},
 			"secret": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				Sensitive: true,
+				Description: "Shared secret between the handler and DC",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
 			},
 			"header": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Description: "List of additional headers",
+				Type:        schema.TypeList,
+				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"key": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Header key",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"value": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "Header value",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"secret_value": {
-							Type:      schema.TypeString,
-							Optional:  true,
-							Sensitive: true,
+							Description: "Indicates whether this header value is sensitive",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Sensitive:   true,
 						},
 					},
 				},
@@ -97,8 +114,9 @@ func resourceWebhook() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Specify whether the filter is an \"in\" or an \"equal\" filter",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"arguments": {
 							Type:     schema.TypeList,
@@ -106,14 +124,16 @@ func resourceWebhook() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"json_path": {
-										Type:     schema.TypeString,
-										Required: true,
+										Description: "JSON Path of the filed you wish to match",
+										Type:        schema.TypeString,
+										Required:    true,
 									},
 									"value": {
-										Type:     schema.TypeList,
-										Required: true,
-										MinItems: 1,
-										Elem:     &schema.Schema{Type: schema.TypeString},
+										Description: "The value to compare too",
+										Type:        schema.TypeList,
+										Required:    true,
+										MinItems:    1,
+										Elem:        &schema.Schema{Type: schema.TypeString},
 									},
 								},
 							},
@@ -126,8 +146,9 @@ func resourceWebhook() *schema.Resource {
 				MaxItems: 10,
 			},
 			"method": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Webhook HTTP method: POST, PATCH, PUT or DELETE",
+				Type:        schema.TypeString,
+				Required:    true,
 				ValidateDiagFunc: ValidateDiagWrapper(validation.StringInSlice([]string{
 					http.MethodDelete,
 					http.MethodPatch,

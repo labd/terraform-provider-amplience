@@ -3,12 +3,14 @@
 page_title: "amplience_content_type Resource - terraform-provider-amplience"
 subcategory: ""
 description: |-
-  
+  Content types are the templates for content items, defining the type of content to be created, including its structure and validation rules. Content types are stored externally to Dynamic Content, on web based services such as AWS, and must be registered with a hub before they can be used to create content.
+  For more info see Amplience Content Type Docs https://amplience.com/docs/integration/workingwithcontenttypes.html
 ---
 
 # amplience_content_type (Resource)
 
-
+Content types are the templates for content items, defining the type of content to be created, including its structure and validation rules. Content types are stored externally to Dynamic Content, on web based services such as AWS, and must be registered with a hub before they can be used to create content.
+For more info see [Amplience Content Type Docs](https://amplience.com/docs/integration/workingwithcontenttypes.html)
 
 
 
@@ -18,9 +20,9 @@ description: |-
 ### Required
 
 - **content_type_uri** (String)
-- **hub_id** (String)
+- **hub_id** (String) ID of the Hub the Content Type should be registered to
 - **label** (String)
-- **status** (String)
+- **status** (String) Status of the Content Type. Can be ACTIVE or DELETED
 
 ### Optional
 

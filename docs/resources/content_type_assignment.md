@@ -3,12 +3,12 @@
 page_title: "amplience_content_type_assignment Resource - terraform-provider-amplience"
 subcategory: ""
 description: |-
-  
+  Resource used to assign a Content Type to a Content Repository
 ---
 
 # amplience_content_type_assignment (Resource)
 
-
+Resource used to assign a Content Type to a Content Repository
 
 
 
@@ -17,8 +17,8 @@ description: |-
 
 ### Required
 
-- **content_type_id** (String)
-- **repository_id** (String)
+- **content_type_id** (String) ID of the Content Type to assign to the Repository
+- **repository_id** (String) ID of the Content Repository to assign the type to
 
 ### Optional
 
