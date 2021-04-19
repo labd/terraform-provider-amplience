@@ -19,7 +19,7 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: Install dependencies
-        run: go get ./amplience_provider
+        run: go get ./amplience
       - name: Run tests
         run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
         env:
