@@ -69,6 +69,15 @@ Then run
 make build
 ```
 
+## Generating Documentation
+This provider uses the `tfplugindocs` tool to automatically generate documentation based on the descriptions of the 
+resources and fields. Install the most recent release of the tool by downloading a binary from [the tfplugindocs repository](https://github.com/hashicorp/terraform-plugin-docs/releases).
+And running
+```shell
+make docs
+```
+In order to ensure up to date documentation make sure to update the description fields of any and all resources upon
+creation or editing.
 ### Testing local changes
 As of terraform 0.13 testing local changes requires a little effort.
 You can run 
