@@ -23,6 +23,9 @@ func resourceContentRepository() *schema.Resource {
 		ReadContext:   resourceContentRepositoryRead,
 		UpdateContext: resourceContentRepositoryUpdate,
 		DeleteContext: resourceContentRepositoryDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"hub_id": {
 				Type:             schema.TypeString,

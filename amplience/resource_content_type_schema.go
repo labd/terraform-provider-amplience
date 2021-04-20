@@ -20,6 +20,9 @@ func resourceContentTypeSchema() *schema.Resource {
 		ReadContext:   resourceContentTypeSchemaRead,
 		UpdateContext: resourceContentTypeSchemaUpdate,
 		DeleteContext: resourceContentTypeSchemaDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"hub_id": {
 				Type:             schema.TypeString,

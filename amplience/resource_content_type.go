@@ -21,6 +21,9 @@ func resourceContentType() *schema.Resource {
 		ReadContext:   resourceContentTypeRead,
 		UpdateContext: resourceContentTypeUpdate,
 		DeleteContext: resourceContentTypeDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"hub_id": {
 				Description:      "ID of the Hub the Content Type should be registered to",
