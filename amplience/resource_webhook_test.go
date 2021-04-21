@@ -156,7 +156,6 @@ func testAccWebhooksConfig(label string) string {
 	return fmt.Sprintf(`
 	resource "amplience_webhook" "standard" {
       label = "%[1]s"
-	  hub_id = "foobar"
 
       events = [
 		"dynamic-content.content-item.created",

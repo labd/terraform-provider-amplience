@@ -48,8 +48,6 @@ func TestAccContentRepository_CreateAndUpdate(t *testing.T) {
 func testAccContentRepositoryConfig(name, label string) string {
 	return fmt.Sprintf(`
 	resource "amplience_content_repository" "testrepo" {
-      hub_id = "foobar"
-
       name = "%[1]s"
       label = "%[2]s"
     }
