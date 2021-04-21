@@ -237,7 +237,7 @@ func resourceWebhookSaveState(data *schema.ResourceData, webhook content.Webhook
 	data.Set("active", webhook.Active)
 	data.Set("secret", webhook.Secret)
 	data.Set("method", webhook.Method)
-	data.Set("filter", flattenWebhookFilters(webhook.Filters))
+	data.Set("filter", flattenWebhookFilters(&webhook.Filters))
 	data.Set("custom_payload", convertCustomPayloadToMap(webhook.CustomPayload))
 }
 
@@ -440,30 +440,47 @@ func resourceWebhookGetCustomPayloadAndValidate(input interface{}) (*content.Web
 	return &payload, nil
 }
 
-func flattenWebhookFilters(filters []content.WebhookFilter) []interface{} {
-	result := make([]interface{}, len(filters))
+func flattenWebhookFilters(filters *[]content.WebhookFilter) []interface{} {
+	if filters != nil {
+		fs := make([]interface{}, len(*filters), len(*filters))
 
-	for _, filter := range filters {
-		item := make(map[string]interface{})
-		arguments := make(map[string]interface{})
+		for i, filter := range *filters {
+			f := make(map[string]interface{})
 
-		switch v := filter.(type) {
-		case content.WebhookFilterEqual:
-			item["type"] = "equal"
-			arguments["json_path"] = v.JSONPath
-			arguments["values"] = []string{v.Value}
-			item["arguments"] = arguments
+			switch v := filter.(type) {
+			case content.WebhookFilterEqual:
+				f["type"] = "equal"
+				f["arguments"] = flattenWebhookFilterEqualArguments(v.Value, v.JSONPath)
+				fs[i] = f
 
-		case content.WebhookFilterIn:
-			item["type"] = "in"
-			arguments["json_path"] = v.JSONPath
-			arguments["values"] = v.Values
-			item["arguments"] = arguments
+			case content.WebhookFilterIn:
+				f["type"] = "in"
+				f["arguments"] = flattenWebhookFilterInArguments(v.Values, v.JSONPath)
+				fs[i] = f
+			}
 		}
-
+		return fs
 	}
 
-	return result
+	return make([]interface{}, 0)
+}
+
+func flattenWebhookFilterEqualArguments(Value string, JSONPath string) interface{} {
+	args := make([]interface{}, 1, 1)
+	argMap := make(map[string]interface{})
+	argMap["json_path"] = JSONPath
+	argMap["value"] = []string{Value}
+	args[0] = argMap
+	return args
+}
+
+func flattenWebhookFilterInArguments(Values []string, JSONPath string) interface{} {
+	args := make([]interface{}, 1, 1)
+	argMap := make(map[string]interface{})
+	argMap["json_path"] = JSONPath
+	argMap["value"] = Values
+	args[0] = argMap
+	return args
 }
 
 func convertCustomPayloadToMap(payload *content.WebhookCustomPayload) map[string]string {

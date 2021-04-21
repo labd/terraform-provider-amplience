@@ -46,6 +46,7 @@ func Provider() *schema.Provider {
 				Description:      "ID of the Hub to manage",
 				Type:             schema.TypeString,
 				Required:         true,
+				DefaultFunc:      schema.EnvDefaultFunc("AMPLIENCE_HUB_ID", nil),
 				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
 			},
 		},
