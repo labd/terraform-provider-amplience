@@ -6,6 +6,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/labd/amplience-go-sdk/content"
 )
 
@@ -40,6 +41,12 @@ func Provider() *schema.Provider {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("AMPLIENCE_AUTH_URL", "https://auth.adis.ws/oauth/token"),
 				Sensitive:   false,
+			},
+			"hub_id": {
+				Description:      "ID of the Hub to manage",
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -79,5 +86,10 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.FromErr(err)
 	}
 
-	return client, diags
+	client_info := &ClientInfo{
+		client: client,
+		hubID:  d.Get("hub_id").(string),
+	}
+
+	return client_info, diags
 }

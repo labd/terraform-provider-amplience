@@ -26,13 +26,6 @@ func resourceWebhook() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
-			"hub_id": {
-				Description:      "ID of the Hub the Webhook is in",
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
-			},
 			"label": {
 				Description: "Label for the Webhook",
 				Type:        schema.TypeString,
@@ -167,45 +160,43 @@ func resourceWebhook() *schema.Resource {
 
 func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
-
-	hub_id := data.Get("hub_id").(string)
+	ci := getClient(meta)
 
 	input, err := createWebhookInput(data)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating webhook draft: %w", err))
 	}
 
-	webhook, err := c.WebhookCreate(hub_id, *input)
+	webhook, err := ci.client.WebhookCreate(ci.hubID, *input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceWebhookSaveState(data, hub_id, webhook)
+	resourceWebhookSaveState(data, webhook)
 	return diags
 }
 
 func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
-	hub_id, webhook_id := parseID(data.Id())
+	webhook_id := data.Id()
 
-	webhook, err := c.WebhookGet(hub_id, webhook_id)
+	webhook, err := ci.client.WebhookGet(ci.hubID, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	resourceWebhookSaveState(data, hub_id, webhook)
+	resourceWebhookSaveState(data, webhook)
 	return diags
 }
 
 func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
-	hub_id, webhook_id := parseID(data.Id())
+	webhook_id := data.Id()
 
-	webhook, err := c.WebhookGet(hub_id, webhook_id)
+	webhook, err := ci.client.WebhookGet(ci.hubID, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -215,21 +206,21 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 		return diag.FromErr(err)
 	}
 
-	new, err := c.WebhookUpdate(hub_id, webhook, *input)
+	new, err := ci.client.WebhookUpdate(ci.hubID, webhook, *input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	resourceWebhookSaveState(data, hub_id, new)
+	resourceWebhookSaveState(data, new)
 	return diags
 }
 
 func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
-	hub_id, webhook_id := parseID(data.Id())
+	webhook_id := data.Id()
 
-	err := c.WebhookDelete(hub_id, webhook_id)
+	err := ci.client.WebhookDelete(ci.hubID, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -238,8 +229,8 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 	return diags
 }
 
-func resourceWebhookSaveState(data *schema.ResourceData, hub_id string, webhook content.Webhook) {
-	data.SetId(createID(hub_id, webhook.ID))
+func resourceWebhookSaveState(data *schema.ResourceData, webhook content.Webhook) {
+	data.SetId(webhook.ID)
 	data.Set("label", webhook.Label)
 	data.Set("events", webhook.Events)
 	data.Set("handlers", webhook.Handlers)

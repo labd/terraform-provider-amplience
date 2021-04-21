@@ -3,8 +3,6 @@ package amplience
 import (
 	"context"
 
-	"github.com/labd/amplience-go-sdk/content"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -32,11 +30,11 @@ func dataSourceHub() *schema.Resource {
 
 func dataSourceHubRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	hub_id := data.Get("id").(string)
 
-	hub, err := c.HubGet(hub_id)
+	hub, err := ci.client.HubGet(hub_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

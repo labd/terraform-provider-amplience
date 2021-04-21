@@ -3,9 +3,7 @@ package amplience
 import (
 	"context"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/labd/amplience-go-sdk/content"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,10 +29,6 @@ func dataSourceContentRepository() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"hub_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -45,24 +39,16 @@ func dataSourceContentRepository() *schema.Resource {
 
 func dataSourceContentRepositoryRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	repository_id := data.Get("id").(string)
-	repository, err := c.ContentRepositoryGet(repository_id)
+	repository, err := ci.client.ContentRepositoryGet(repository_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	hub, err := repository.GetHub(c)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	spew.Dump(repository)
 
 	data.SetId(repository.ID)
 	data.Set("label", repository.Label)
-	data.Set("hub_id", hub.ID)
 	data.Set("name", repository.Name)
 	return diags
 }

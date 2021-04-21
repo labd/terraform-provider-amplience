@@ -24,12 +24,6 @@ func resourceContentTypeSchema() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
-			"hub_id": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
-			},
 			"body": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -54,49 +48,45 @@ func resourceContentTypeSchema() *schema.Resource {
 
 func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
-	hub_id := data.Get("hub_id").(string)
 	input := content.ContentTypeSchemaInput{
 		SchemaID:        data.Get("schema_id").(string),
 		Body:            data.Get("body").(string),
 		ValidationLevel: data.Get("validation_level").(string),
 	}
 
-	schema, err := c.ContentTypeSchemaCreate(hub_id, input)
+	schema, err := ci.client.ContentTypeSchemaCreate(ci.hubID, input)
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSchemaSaveState(data, hub_id, schema)
+	resourceContentTypeSchemaSaveState(data, schema)
 	return diags
 }
 
 func resourceContentTypeSchemaRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	schema_id := data.Id()
-	hub_id := data.Get("hub_id").(string)
-
-	schema, err := c.ContentTypeSchemaGet(schema_id)
+	schema, err := ci.client.ContentTypeSchemaGet(schema_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSchemaSaveState(data, hub_id, schema)
+	resourceContentTypeSchemaSaveState(data, schema)
 	return diags
 }
 
 func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	schema_id := data.Id()
-	hub_id := data.Get("hub_id").(string)
 	if data.HasChange("body") || data.HasChange("validation_level") {
-		current, err := c.ContentTypeSchemaGet(schema_id)
+		current, err := ci.client.ContentTypeSchemaGet(schema_id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -107,26 +97,26 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 			ValidationLevel: data.Get("validation_level").(string),
 		}
 
-		schema, err := c.ContentTypeSchemaUpdate(current, input)
+		schema, err := ci.client.ContentTypeSchemaUpdate(current, input)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
-		resourceContentTypeSchemaSaveState(data, hub_id, schema)
+		resourceContentTypeSchemaSaveState(data, schema)
 	}
 
 	return diags
 }
 
 // The amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
-func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(*content.Client)
+	ci := getClient(meta)
 
 	id := data.Id()
 	version := data.Get("version").(int)
 
-	_, err := c.ContentTypeSchemaArchive(id, version)
+	_, err := ci.client.ContentTypeSchemaArchive(id, version)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -135,9 +125,8 @@ func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceD
 	return diags
 }
 
-func resourceContentTypeSchemaSaveState(data *schema.ResourceData, hub_id string, resource content.ContentTypeSchema) {
+func resourceContentTypeSchemaSaveState(data *schema.ResourceData, resource content.ContentTypeSchema) {
 	data.SetId(resource.ID)
-	data.Set("hub_id", hub_id)
 	data.Set("schema_id", resource.SchemaID)
 	data.Set("body", resource.Body)
 	data.Set("validation_level", resource.ValidationLevel)

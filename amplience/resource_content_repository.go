@@ -27,12 +27,6 @@ func resourceContentRepository() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
-			"hub_id": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
-			},
 			"name": {
 				Type:             schema.TypeString,
 				Required:         true,
@@ -48,15 +42,14 @@ func resourceContentRepository() *schema.Resource {
 
 func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
-	hub_id := data.Get("hub_id").(string)
 	input := content.ContentRepositoryInput{
 		Name:  data.Get("name").(string),
 		Label: data.Get("label").(string),
 	}
 
-	repository, err := c.ContentRepositoryCreate(hub_id, input)
+	repository, err := ci.client.ContentRepositoryCreate(ci.hubID, input)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -65,40 +58,33 @@ func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceD
 	data.SetId(repository.ID)
 	data.Set("name", repository.Name)
 	data.Set("label", repository.Label)
-	data.Set("hub_id", hub_id)
 	return diags
 }
 
 func resourceContentRepositoryRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	repository_id := data.Id()
 
-	repository, err := c.ContentRepositoryGet(repository_id)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	hub, err := repository.GetHub(c)
+	repository, err := ci.client.ContentRepositoryGet(repository_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data.Set("name", repository.Name)
 	data.Set("label", repository.Label)
-	data.Set("hub_id", hub.ID)
 	return diags
 }
 
 func resourceContentRepositoryUpdate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	repository_id := data.Id()
 
 	if data.HasChange("label") || data.HasChange("name") {
-		current, err := c.ContentRepositoryGet(repository_id)
+		current, err := ci.client.ContentRepositoryGet(repository_id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -108,7 +94,7 @@ func resourceContentRepositoryUpdate(ctx context.Context, data *schema.ResourceD
 			Label: data.Get("label").(string),
 		}
 
-		repository, err := c.ContentRepositoryUpdate(current, input)
+		repository, err := ci.client.ContentRepositoryUpdate(current, input)
 		if err != nil {
 			return diag.FromErr(err)
 		}

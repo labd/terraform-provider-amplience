@@ -3,6 +3,8 @@ package amplience
 import (
 	"fmt"
 	"strings"
+
+	"github.com/labd/amplience-go-sdk/content"
 )
 
 func parseID(id string) (hub_id string, resource_id string) {
@@ -15,4 +17,13 @@ func parseID(id string) (hub_id string, resource_id string) {
 
 func createID(hub_id string, resource_id string) string {
 	return fmt.Sprintf("%s:%s", hub_id, resource_id)
+}
+
+type ClientInfo struct {
+	client *content.Client
+	hubID  string
+}
+
+func getClient(meta interface{}) *ClientInfo {
+	return meta.(*ClientInfo)
 }

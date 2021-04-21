@@ -25,13 +25,6 @@ func resourceContentType() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
-			"hub_id": {
-				Description:      "ID of the Hub the Content Type should be registered to",
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
-			},
 			"content_type_uri": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -89,54 +82,51 @@ func resourceContentType() *schema.Resource {
 
 func resourceContentTypeCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
-	hub_id := data.Get("hub_id").(string)
 	input := resourceContentTypeCreateInput(data)
-	content_type, err := c.ContentTypeCreate(hub_id, input)
+	content_type, err := ci.client.ContentTypeCreate(ci.hubID, input)
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSaveState(data, hub_id, content_type)
+	resourceContentTypeSaveState(data, content_type)
 	return diags
 }
 
 func resourceContentTypeRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	content_type_id := data.Id()
-	hub_id := data.Get("hub_id").(string)
-	content_type, err := c.ContentTypeGet(content_type_id)
+	content_type, err := ci.client.ContentTypeGet(content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSaveState(data, hub_id, content_type)
+	resourceContentTypeSaveState(data, content_type)
 	return diags
 }
 
 func resourceContentTypeUpdate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	content_type_id := data.Id()
-	hub_id := data.Get("hub_id").(string)
 
-	current, err := c.ContentTypeGet(content_type_id)
+	current, err := ci.client.ContentTypeGet(content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	input := resourceContentTypeCreateInput(data)
-	content_type, err := c.ContentTypeUpdate(current, input)
+	content_type, err := ci.client.ContentTypeUpdate(current, input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSaveState(data, hub_id, content_type)
+	resourceContentTypeSaveState(data, content_type)
 	return diags
 }
 
@@ -156,12 +146,11 @@ func resourceContentTypeDelete(ctx context.Context, data *schema.ResourceData, m
 	return diags
 }
 
-func resourceContentTypeSaveState(data *schema.ResourceData, hub_id string, resource content.ContentType) {
+func resourceContentTypeSaveState(data *schema.ResourceData, resource content.ContentType) {
 	data.SetId(resource.ID)
 	data.Set("content_type_uri", resource.ContentTypeURI)
 	data.Set("status", resource.Status)
 	data.Set("label", resource.Settings.Label)
-	data.Set("hub_id", hub_id)
 }
 
 func resourceContentTypeCreateInput(data *schema.ResourceData) content.ContentTypeInput {
