@@ -9,6 +9,7 @@ build:
 # see: https://discuss.hashicorp.com/t/easiest-way-to-use-a-local-custom-provider-with-terraform-0-13/12691/5
 build-local:
 	go build -o terraform-provider-amplience_${LOCAL_TEST_VERSION}
+	mkdir -p ~/.terraform.d/plugins/registry.terraform.io/labd/amplience/${LOCAL_TEST_VERSION}/${OS_ARCH}
 	cp terraform-provider-amplience_${LOCAL_TEST_VERSION} ~/.terraform.d/plugins/registry.terraform.io/labd/amplience/${LOCAL_TEST_VERSION}/${OS_ARCH}/terraform-provider-amplience_v${LOCAL_TEST_VERSION}
 
 format:
