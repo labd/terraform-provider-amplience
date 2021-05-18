@@ -1,3 +1,7 @@
+0.3.2 (2021-05-18)
+==================
+ - Fix the resource_content_type_assignemnt resource
+
 0.2.0 (2021-04-20)
 ==================
 - Refactored the codebase to use a separate Go SDK for Amplience
