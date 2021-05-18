@@ -3,8 +3,6 @@ package amplience
 import (
 	"context"
 
-	"github.com/labd/amplience-go-sdk/content"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -34,12 +32,12 @@ func resourceContentTypeAssignment() *schema.Resource {
 
 func resourceContentTypeAssignmentCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	repository_id := data.Get("repository_id").(string)
 	content_type_id := data.Get("content_type_id").(string)
 
-	_, err := c.ContentRepositoryAssignContentType(repository_id, content_type_id)
+	_, err := ci.client.ContentRepositoryAssignContentType(repository_id, content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -61,11 +59,11 @@ func resourceContentTypeAssignmentRead(ctx context.Context, data *schema.Resourc
 // The amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
 func resourceContentTypeAssignmentDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := meta.(*content.Client)
+	ci := getClient(meta)
 
 	repository_id, content_type_id := parseID(data.Id())
 
-	_, err := c.ContentRepositoryRemoveContentType(repository_id, content_type_id)
+	_, err := ci.client.ContentRepositoryRemoveContentType(repository_id, content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
