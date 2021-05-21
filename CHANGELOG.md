@@ -1,3 +1,7 @@
+0.3.3 (2021-05-21)
+==================
+ - Fix resource_content_type deletion (archiving)
+
 0.3.2 (2021-05-18)
 ==================
  - Fix the resource_content_type_assignemnt resource
