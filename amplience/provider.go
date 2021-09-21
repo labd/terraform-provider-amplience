@@ -56,6 +56,7 @@ func Provider() *schema.Provider {
 			"amplience_content_type_assignment": resourceContentTypeAssignment(),
 			"amplience_content_type_schema":     resourceContentTypeSchema(),
 			"amplience_webhook":                 resourceWebhook(),
+			"amplience_index":                   resourceIndex(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"amplience_hub":                dataSourceHub(),
