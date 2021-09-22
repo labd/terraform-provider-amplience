@@ -178,14 +178,14 @@ func createIndexInput(data *schema.ResourceData) (*content.AlgoliaIndexInput, er
 	return input, nil
 }
 
-func createSettings(input string) (content.AlgoliaIndexSettings, error) {
+func createAlgoliaIndexSettings(input string) (content.AlgoliaIndexSettings, error) {
 	settingsInput := content.AlgoliaIndexSettings{}
 	err := json.Unmarshal([]byte(input), &settingsInput)
 	return settingsInput, err
 }
 func updateIndexWebhooksAndSettings(client *content.Client, hubId string, indexId string, data *schema.ResourceData) error {
 
-	settingsInput, err := createSettings(data.Get("settings").(string))
+	settingsInput, err := createAlgoliaIndexSettings(data.Get("settings").(string))
 	if err != nil {
 		return err
 	}
