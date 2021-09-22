@@ -23,7 +23,7 @@ Currently the checked resources are supported. Support for additional resources 
 - [ ] Publishing Jobs
 - [ ] SFCC
 - [ ] SFMC
-- [ ] Search Indexes
+- [x] Search Indexes
 - [ ] Search Indexes - Analyics
 - [ ] Slots
 - [ ] Snapshots
