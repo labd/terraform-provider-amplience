@@ -10,14 +10,14 @@ import (
 	"github.com/labd/amplience-go-sdk/content"
 )
 
-func resourceIndex() *schema.Resource {
+func resourceSearchIndex() *schema.Resource {
 	return &schema.Resource{
 		Description: "A search index is the connection between Amplience and Algolia." +
 			"For more info see [Amplience Index Docs](https://amplience.com/docs/development/search-indexes/readme.html)",
-		CreateContext: resourceIndexCreate,
-		ReadContext:   resourceIndexRead,
-		UpdateContext: resourceIndexUpdate,
-		DeleteContext: resourceIndexDelete,
+		CreateContext: resourceSearchIndexCreate,
+		ReadContext:   resourceSearchIndexRead,
+		UpdateContext: resourceSearchIndexUpdate,
+		DeleteContext: resourceSearchIndexDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -59,7 +59,7 @@ func resourceIndex() *schema.Resource {
 	}
 }
 
-func resourceIndexCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSearchIndexCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
 
@@ -78,11 +78,11 @@ func resourceIndexCreate(ctx context.Context, data *schema.ResourceData, meta in
 		return diag.FromErr(err)
 	}
 
-	resourceIndexSaveState(data, resource)
+	resourceSearchIndexSaveState(data, resource)
 	return diags
 }
 
-func resourceIndexRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSearchIndexRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
 
@@ -92,11 +92,11 @@ func resourceIndexRead(ctx context.Context, data *schema.ResourceData, meta inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	resourceIndexSaveState(data, resource)
+	resourceSearchIndexSaveState(data, resource)
 	return diags
 }
 
-func resourceIndexUpdate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSearchIndexUpdate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
 
@@ -122,17 +122,17 @@ func resourceIndexUpdate(ctx context.Context, data *schema.ResourceData, meta in
 		return diag.FromErr(err)
 	}
 
-	resourceIndexSaveState(data, new)
+	resourceSearchIndexSaveState(data, new)
 	return diags
 }
 
-func resourceIndexDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSearchIndexDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
 
-	webhook_id := data.Id()
+	id := data.Id()
 
-	_, err := ci.client.AlgoliaIndexDelete(ci.hubID, webhook_id)
+	_, err := ci.client.AlgoliaIndexDelete(ci.hubID, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -141,7 +141,7 @@ func resourceIndexDelete(ctx context.Context, data *schema.ResourceData, meta in
 	return diags
 }
 
-func resourceIndexSaveState(data *schema.ResourceData, resource content.AlgoliaIndex) {
+func resourceSearchIndexSaveState(data *schema.ResourceData, resource content.AlgoliaIndex) {
 	data.SetId(resource.ID)
 	data.Set("label", resource.Label)
 	data.Set("suffix", resource.Suffix)
