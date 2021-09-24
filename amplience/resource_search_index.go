@@ -150,10 +150,10 @@ func resourceSearchIndexSaveState(data *schema.ResourceData, resource content.Al
 
 func createIndexInput(data *schema.ResourceData) (*content.AlgoliaIndexInput, error) {
 
-	var assignedContentTypes []content.AsssignedContentTypeInput
+	var assignedContentTypes []content.AssignedContentTypeInput
 	for _, val := range data.Get("content_types").([]interface{}) {
 		uri := val.(string)
-		assignedContentTypes = append(assignedContentTypes, content.AsssignedContentTypeInput{
+		assignedContentTypes = append(assignedContentTypes, content.AssignedContentTypeInput{
 			ContentTypeUri: uri,
 		})
 	}
