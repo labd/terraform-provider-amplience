@@ -23,7 +23,8 @@ jobs:
       - name: Run tests
         run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
         env:
-          TF_ACC: 0
+          # we need an AMPLIENCE_HUB_ID dedicated to testing
+          # TF_ACC: 1
           AMPLIENCE_CLIENT_ID: ${{ secrets.AMPLIENCE_CLIENT_ID }}
           AMPLIENCE_CLIENT_SECRET: ${{ secrets.AMPLIENCE_CLIENT_SECRET }}
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
