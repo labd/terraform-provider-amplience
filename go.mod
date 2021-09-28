@@ -15,7 +15,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.9.1 // indirect
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/hashicorp/yamux v0.0.0-20210316155119-a95892c5f864 // indirect
-	github.com/labd/amplience-go-sdk v0.0.0-20210922123406-7d8ffcbf9812
+	github.com/labd/amplience-go-sdk v0.0.0-20210928142919-9d79863f4be9
 	github.com/mitchellh/copystructure v1.1.2 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect

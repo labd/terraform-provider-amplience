@@ -65,7 +65,7 @@ func resourceSearchIndexCreate(ctx context.Context, data *schema.ResourceData, m
 
 	input, err := createIndexInput(data)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating index draft: %w", err))
+		return diag.FromErr(err)
 	}
 
 	resource, err := ci.client.AlgoliaIndexCreate(ci.hubID, *input)
@@ -75,6 +75,8 @@ func resourceSearchIndexCreate(ctx context.Context, data *schema.ResourceData, m
 
 	err = updateIndexWebhooksAndSettings(ci.client, ci.hubID, resource.ID, data)
 	if err != nil {
+		// clean up for timeouts etc.
+		_, err = ci.client.AlgoliaIndexDelete(ci.hubID, resource.ID)
 		return diag.FromErr(err)
 	}
 
@@ -161,12 +163,6 @@ func createIndexInput(data *schema.ResourceData) (*content.AlgoliaIndexInput, er
 	indexType := data.Get("type").(string)
 	if indexType != "PRODUCTION" && indexType != "STAGING" {
 		return nil, fmt.Errorf("type must be either 'PRODUCTION' or 'STAGING'")
-	}
-
-	var handlerSlice []string
-	for _, val := range data.Get("handlers").([]interface{}) {
-		handler := val.(string)
-		handlerSlice = append(handlerSlice, handler)
 	}
 
 	input := &content.AlgoliaIndexInput{
