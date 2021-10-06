@@ -114,9 +114,24 @@ func resourceSearchIndexUpdate(ctx context.Context, data *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 
-	new, err := ci.client.AlgoliaIndexUpdate(ci.hubID, old, *input)
-	if err != nil {
-		return diag.FromErr(err)
+	// Amplience can actually only update the Label, so we delete the old index and create a new one.
+	// NOTE: this removes all currently saved indexes and requires a republish of all content types involved.
+	var new content.AlgoliaIndex
+	if old.Suffix != input.Suffix || old.Type != input.Type {
+		_, err = ci.client.AlgoliaIndexDelete(ci.hubID, id)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		new, err = ci.client.AlgoliaIndexCreate(ci.hubID, *input)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+	} else {
+		new, err = ci.client.AlgoliaIndexUpdate(ci.hubID, old, *input)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	err = updateIndexWebhooksAndSettings(ci.client, ci.hubID, id, data)
