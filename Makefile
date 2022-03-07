@@ -28,3 +28,8 @@ deps:
 
 docs:
 	tfplugindocs
+
+update-sdk:
+	GO111MODULE=on go get github.com/labd/amplience-go-sdk
+	GO111MODULE=on go mod vendor
+	GO111MODULE=on go mod tidy

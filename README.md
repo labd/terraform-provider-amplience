@@ -69,6 +69,16 @@ Then run
 make build
 ```
 
+### Update amplience-go-sdk
+
+The amplience-go-sdk always uses the latest (master) version. To update to
+the latest version:
+
+```sh
+make update-sdk
+```
+
+
 ## Generating Documentation
 This provider uses the `tfplugindocs` tool to automatically generate documentation based on the descriptions of the 
 resources and fields. Install the most recent release of the tool by downloading a binary from [the tfplugindocs repository](https://github.com/hashicorp/terraform-plugin-docs/releases).
