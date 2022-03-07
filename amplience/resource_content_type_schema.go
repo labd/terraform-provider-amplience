@@ -2,6 +2,7 @@ package amplience
 
 import (
 	"context"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/labd/amplience-go-sdk/content"
@@ -59,11 +60,59 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 	schema, err := ci.client.ContentTypeSchemaCreate(ci.hubID, input)
 
 	if err != nil {
+		if errResp, ok := err.(*content.ErrorResponse); ok {
+			if errResp.StatusCode == 409 {
+				log.Println("Received 409 conflict response; schema must be unarchived")
+				log.Println(errResp)
+				return _unarchiveSchema(data, ci)
+			}
+		}
 		return diag.FromErr(err)
 	}
 
 	resourceContentTypeSchemaSaveState(data, schema)
 	return diags
+}
+
+func _unarchiveSchema(data *schema.ResourceData, ci *ClientInfo) diag.Diagnostics {
+	var diags diag.Diagnostics
+	schemaId := data.Get("schema_id").(string)
+
+	log.Printf("Get info for content type schema %s", schemaId)
+	schema, getErr := _schemaBySchemaId(ci, schemaId)
+
+	if getErr != nil {
+		return diag.FromErr(getErr)
+	}
+
+	log.Printf("Recieved content type schema version %v", schema.Version)
+	schema, err := ci.client.ContentTypeSchemaUnarchive(schema.ID, schema.Version)
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	resourceContentTypeSchemaSaveState(data, schema)
+
+	return diags
+}
+
+func _schemaBySchemaId(ci *ClientInfo, schemaId string) (content.ContentTypeSchema, error) {
+	log.Printf("Get info for content type schema %s", schemaId)
+	result := content.ContentTypeSchema{}
+	schemaList, getErr := ci.client.ContentTypeSchemaList(ci.hubID)
+
+	if getErr != nil {
+		return result, getErr
+	}
+
+	for _, schema := range schemaList.Items {
+		if schema.SchemaID == schemaId {
+			return schema, nil
+		}
+	}
+
+	return result, nil
 }
 
 func resourceContentTypeSchemaRead(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
