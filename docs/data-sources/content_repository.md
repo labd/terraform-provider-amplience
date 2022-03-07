@@ -23,7 +23,6 @@ For more info see [Amplience Hubs & Repositories Docs](https://amplience.com/doc
 
 ### Read-Only
 
-- **hub_id** (String)
 - **label** (String)
 - **name** (String)
 

@@ -4,7 +4,6 @@ terraform-provider-amplience_*
 coverage.txt
 
 // Terraform files
-*.tf
 .terraform/
 terraform.*
 crash.log

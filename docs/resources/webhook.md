@@ -19,7 +19,6 @@ For more info see [Amplience Webhook Docs](https://amplience.com/docs/integratio
 
 ### Required
 
-- **hub_id** (String) ID of the Hub the Webhook is in
 - **label** (String) Label for the Webhook
 - **method** (String) Webhook HTTP method: POST, PATCH, PUT or DELETE
 

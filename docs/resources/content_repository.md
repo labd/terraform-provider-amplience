@@ -19,7 +19,6 @@ For more info see [Amplience Hubs & Repositories Docs](https://amplience.com/doc
 
 ### Required
 
-- **hub_id** (String)
 - **label** (String)
 - **name** (String)
 

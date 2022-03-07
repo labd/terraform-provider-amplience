@@ -20,7 +20,6 @@ For more info see [Amplience Content Type Docs](https://amplience.com/docs/integ
 ### Required
 
 - **content_type_uri** (String)
-- **hub_id** (String) ID of the Hub the Content Type should be registered to
 - **label** (String)
 - **status** (String) Status of the Content Type. Can be ACTIVE or DELETED
 
