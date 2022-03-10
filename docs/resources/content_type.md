@@ -48,3 +48,10 @@ Required:
 - **templated_uri** (String)
 
 
+## Import
+
+Content types can be imported using the `id`, e.g.,
+
+```
+$ terraform import amplience_content_type.sample id
+```

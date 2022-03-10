@@ -151,6 +151,30 @@ func resourceContentTypeSaveState(data *schema.ResourceData, resource content.Co
 	data.Set("content_type_uri", resource.ContentTypeURI)
 	data.Set("status", resource.Status)
 	data.Set("label", resource.Settings.Label)
+
+	icons := make([]map[string]interface{}, len(resource.Settings.Icons))
+	for i, icon := range resource.Settings.Icons {
+		iconData := make(map[string]interface{})
+
+		iconData["size"] = icon.Size
+		iconData["url"] = icon.URL
+
+		icons[i] = iconData
+	}
+
+	visualizations := make([]map[string]interface{}, len(resource.Settings.Visualizations))
+	for i, visualization := range resource.Settings.Visualizations {
+		visualizationData := make(map[string]interface{})
+
+		visualizationData["label"] = visualization.Label
+		visualizationData["templated_uri"] = visualization.TemplatedURI
+		visualizationData["default"] = visualization.Default
+
+		visualizations[i] = visualizationData
+	}
+
+	data.Set("visualization", visualizations)
+	data.Set("icon", icons)
 }
 
 func resourceContentTypeCreateInput(data *schema.ResourceData) content.ContentTypeInput {
