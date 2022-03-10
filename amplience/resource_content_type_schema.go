@@ -2,6 +2,7 @@ package amplience
 
 import (
 	"context"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/labd/amplience-go-sdk/content"
@@ -49,14 +50,22 @@ func resourceContentTypeSchema() *schema.Resource {
 func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
+	schemaId := data.Get("schema_id").(string)
 
 	input := content.ContentTypeSchemaInput{
-		SchemaID:        data.Get("schema_id").(string),
+		SchemaID:        schemaId,
 		Body:            data.Get("body").(string),
 		ValidationLevel: data.Get("validation_level").(string),
 	}
 
 	schema, err := ci.client.ContentTypeSchemaCreate(ci.hubID, input)
+
+	if errResp, ok := err.(*content.ErrorResponse); ok {
+		if errResp.StatusCode == 409 {
+			log.Println("Received 409 conflict response; schema must be unarchived")
+			schema, err = _unarchiveSchema(schemaId, ci)
+		}
+	}
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -131,4 +140,41 @@ func resourceContentTypeSchemaSaveState(data *schema.ResourceData, resource cont
 	data.Set("body", resource.Body)
 	data.Set("validation_level", resource.ValidationLevel)
 	data.Set("version", resource.Version)
+}
+
+func _unarchiveSchema(schemaId string, ci *ClientInfo) (content.ContentTypeSchema, error) {
+	result := content.ContentTypeSchema{}
+
+	log.Printf("Get info for content type schema %s", schemaId)
+	schema, getErr := _schemaBySchemaId(schemaId, ci)
+
+	if getErr != nil {
+		return result, getErr
+	}
+
+	log.Printf("Recieved content type schema version %v", schema.Version)
+	schema, err := ci.client.ContentTypeSchemaUnarchive(schema.ID, schema.Version)
+
+	if err != nil {
+		return schema, err
+	}
+
+	return schema, err
+}
+
+func _schemaBySchemaId(schemaId string, ci *ClientInfo) (content.ContentTypeSchema, error) {
+	result := content.ContentTypeSchema{}
+	schemaList, getErr := ci.client.ContentTypeSchemaList(ci.hubID)
+
+	if getErr != nil {
+		return result, getErr
+	}
+
+	for _, schema := range schemaList.Items {
+		if schema.SchemaID == schemaId {
+			return schema, nil
+		}
+	}
+
+	return result, nil
 }
