@@ -147,32 +147,13 @@ func resourceContentTypeDelete(ctx context.Context, data *schema.ResourceData, m
 }
 
 func resourceContentTypeSaveState(data *schema.ResourceData, resource content.ContentType) {
+	icons := marshallContentTypeSettingsIcons(&resource.Settings.Icons)
+	visualizations := marshallContentTypeSettingsVisualizations(&resource.Settings.Visualizations)
+
 	data.SetId(resource.ID)
 	data.Set("content_type_uri", resource.ContentTypeURI)
 	data.Set("status", resource.Status)
 	data.Set("label", resource.Settings.Label)
-
-	icons := make([]map[string]interface{}, len(resource.Settings.Icons))
-	for i, icon := range resource.Settings.Icons {
-		iconData := make(map[string]interface{})
-
-		iconData["size"] = icon.Size
-		iconData["url"] = icon.URL
-
-		icons[i] = iconData
-	}
-
-	visualizations := make([]map[string]interface{}, len(resource.Settings.Visualizations))
-	for i, visualization := range resource.Settings.Visualizations {
-		visualizationData := make(map[string]interface{})
-
-		visualizationData["label"] = visualization.Label
-		visualizationData["templated_uri"] = visualization.TemplatedURI
-		visualizationData["default"] = visualization.Default
-
-		visualizations[i] = visualizationData
-	}
-
 	data.Set("visualization", visualizations)
 	data.Set("icon", icons)
 }
@@ -239,28 +220,14 @@ func resourceContentTypeGetSettings(data *schema.ResourceData) content.ContentTy
 	return result
 }
 
-func flattenContentTypeSettings(settings *content.ContentTypeSettings) interface{} {
-	if settings != nil {
-		st := make(map[string]interface{})
-		st["label"] = settings.Label
-		st["icons"] = flattenContentTypeSettingsIcons(&settings.Icons)
-		st["visualizations"] = flattenContentTypeSettingsVisualizations(&settings.Visualizations)
-
-		return st
-	}
-	return make(map[string]interface{})
-}
-
-func flattenContentTypeSettingsIcons(icons *[]content.ContentTypeIcon) []interface{} {
+func marshallContentTypeSettingsIcons(icons *[]content.ContentTypeIcon) []interface{} {
 	if icons != nil {
-		ics := make([]interface{}, len(*icons), len(*icons))
+		ics := make([]interface{}, len(*icons))
 
 		for i, icon := range *icons {
 			ic := make(map[string]interface{})
-
 			ic["size"] = icon.Size
 			ic["url"] = icon.URL
-
 			ics[i] = ic
 		}
 		return ics
@@ -268,17 +235,15 @@ func flattenContentTypeSettingsIcons(icons *[]content.ContentTypeIcon) []interfa
 	return make([]interface{}, 0)
 }
 
-func flattenContentTypeSettingsVisualizations(visualizations *[]content.ContentTypeVisualization) []interface{} {
+func marshallContentTypeSettingsVisualizations(visualizations *[]content.ContentTypeVisualization) []interface{} {
 	if visualizations != nil {
-		vis := make([]interface{}, len(*visualizations), len(*visualizations))
+		vis := make([]interface{}, len(*visualizations))
 
 		for i, visualization := range *visualizations {
 			vi := make(map[string]interface{})
-
 			vi["label"] = visualization.Label
 			vi["default"] = visualization.Default
 			vi["templated_uri"] = visualization.TemplatedURI
-
 			vis[i] = vi
 		}
 		return vis

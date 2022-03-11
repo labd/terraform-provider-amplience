@@ -363,7 +363,7 @@ func resourceWebhookGetFilters(input interface{}) ([]content.WebhookFilter, erro
 		if !ok {
 			filterType = ""
 		}
-		filterArgsMap, ok := i["arguments"].([]interface{})
+		filterArgsMap := i["arguments"].([]interface{})
 
 		switch filterType {
 		case "in":
@@ -442,7 +442,7 @@ func resourceWebhookGetCustomPayloadAndValidate(input interface{}) (*content.Web
 
 func flattenWebhookFilters(filters *[]content.WebhookFilter) []interface{} {
 	if filters != nil {
-		fs := make([]interface{}, len(*filters), len(*filters))
+		fs := make([]interface{}, len(*filters))
 
 		for i, filter := range *filters {
 			f := make(map[string]interface{})
@@ -466,7 +466,7 @@ func flattenWebhookFilters(filters *[]content.WebhookFilter) []interface{} {
 }
 
 func flattenWebhookFilterEqualArguments(Value string, JSONPath string) interface{} {
-	args := make([]interface{}, 1, 1)
+	args := make([]interface{}, 1)
 	argMap := make(map[string]interface{})
 	argMap["json_path"] = JSONPath
 	argMap["value"] = []string{Value}
@@ -475,7 +475,7 @@ func flattenWebhookFilterEqualArguments(Value string, JSONPath string) interface
 }
 
 func flattenWebhookFilterInArguments(Values []string, JSONPath string) interface{} {
-	args := make([]interface{}, 1, 1)
+	args := make([]interface{}, 1)
 	argMap := make(map[string]interface{})
 	argMap["json_path"] = JSONPath
 	argMap["value"] = Values
