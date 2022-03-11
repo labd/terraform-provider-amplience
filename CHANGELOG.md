@@ -1,10 +1,31 @@
+v0.3.7 (2021-12-10)
+===================
+ - Add icon and visualization when importing/reading content type
+ - add unarchive option when provider receives 409 on create (#15)
+ - Update documentation
+
+v0.3.6 (2021-12-10)
+===================
+ - update amplience sdk
+ - recreate index on suffix change
+
+v0.3.5 (2021-09-28)
+===================
+ - update provider and handle create corruption
+
+v0.3.4 (2021-09-24)
+===================
+ - **New resource:** `amplience_search_index`
+ - Update amplience sdk version
+ - Fix archiving content types
+
 0.3.3 (2021-05-21)
 ==================
  - Fix resource_content_type deletion (archiving)
 
 0.3.2 (2021-05-18)
 ==================
- - Fix the resource_content_type_assignemnt resource
+ - Fix the resource_content_type_assignemt resource
 
 0.2.0 (2021-04-20)
 ==================
