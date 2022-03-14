@@ -1,4 +1,4 @@
-v0.3.7 (2021-12-10)
+v0.3.7 (2022-03-14)
 ===================
  - Add icon and visualization when importing/reading content type
  - add unarchive option when provider receives 409 on create (#15)
