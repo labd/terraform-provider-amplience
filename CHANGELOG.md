@@ -1,3 +1,7 @@
+v0.3.8 (2022007015)
+===================
+- upgraded to go 1.17 to trigger arm64 builds
+
 v0.3.7 (2022-03-14)
 ===================
  - Add icon and visualization when importing/reading content type
