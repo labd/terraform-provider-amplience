@@ -2,6 +2,8 @@ package amplience
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -146,13 +148,13 @@ func _unarchiveSchema(schemaId string, ci *ClientInfo) (content.ContentTypeSchem
 	result := content.ContentTypeSchema{}
 
 	log.Printf("Get info for content type schema %s", schemaId)
-	schema, getErr := _schemaBySchemaId(schemaId, ci)
+	schema, getErr := _schemaBySchemaId(schemaId, ci, content.StatusAny)
 
 	if getErr != nil {
 		return result, getErr
 	}
 
-	log.Printf("Recieved content type schema version %v", schema.Version)
+	log.Printf("Received content type schema version %v", schema.Version)
 	schema, err := ci.client.ContentTypeSchemaUnarchive(schema.ID, schema.Version)
 
 	if err != nil {
@@ -162,19 +164,19 @@ func _unarchiveSchema(schemaId string, ci *ClientInfo) (content.ContentTypeSchem
 	return schema, err
 }
 
-func _schemaBySchemaId(schemaId string, ci *ClientInfo) (content.ContentTypeSchema, error) {
-	result := content.ContentTypeSchema{}
-	schemaList, getErr := ci.client.ContentTypeSchemaList(ci.hubID)
+func _schemaBySchemaId(schemaId string, ci *ClientInfo, status content.ContentStatus) (content.ContentTypeSchema, error) {
+	dummy := content.ContentTypeSchema{}
+	schemaList, getErr := ci.client.ContentTypeSchemaGetAll(ci.hubID, status)
 
 	if getErr != nil {
-		return result, getErr
+		return dummy, getErr
 	}
 
-	for _, schema := range schemaList.Items {
+	for _, schema := range schemaList {
 		if schema.SchemaID == schemaId {
 			return schema, nil
 		}
 	}
 
-	return result, nil
+	return dummy, errors.New(fmt.Sprintf("Could not find schema %s", schemaId))
 }
