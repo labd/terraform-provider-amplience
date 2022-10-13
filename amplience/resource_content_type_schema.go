@@ -2,7 +2,6 @@ package amplience
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 
@@ -178,5 +177,5 @@ func _schemaBySchemaId(schemaId string, ci *ClientInfo, status content.ContentSt
 		}
 	}
 
-	return dummy, errors.New(fmt.Sprintf("Could not find schema %s", schemaId))
+	return dummy, fmt.Errorf(fmt.Sprintf("Could not find schema %s", schemaId))
 }
