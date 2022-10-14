@@ -2,7 +2,6 @@ package amplience
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -59,12 +58,22 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 		ValidationLevel: data.Get("validation_level").(string),
 	}
 
-	schema, err := ci.client.ContentTypeSchemaCreate(ci.hubID, input)
+	instance, err := ci.client.ContentTypeSchemaCreate(ci.hubID, input)
 
 	if errResp, ok := err.(*content.ErrorResponse); ok {
-		if errResp.StatusCode == 409 {
-			log.Println("Received 409 conflict response; schema must be unarchived")
-			schema, err = _unarchiveSchema(schemaId, ci)
+		if errResp.StatusCode >= 400 {
+
+			log.Println("Received 400 conflict response; schema already exists")
+
+			instance, err = ci.client.ContentTypeSchemaFindBySchemaId(input.SchemaID, ci.hubID)
+
+			if err != nil {
+				return diag.FromErr(err)
+			}
+
+			if instance.Status == string(content.StatusArchived) {
+				instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
+			}
 		}
 	}
 
@@ -72,7 +81,7 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSchemaSaveState(data, schema)
+	resourceContentTypeSchemaSaveState(data, instance)
 	return diags
 }
 
@@ -141,41 +150,4 @@ func resourceContentTypeSchemaSaveState(data *schema.ResourceData, resource cont
 	data.Set("body", resource.Body)
 	data.Set("validation_level", resource.ValidationLevel)
 	data.Set("version", resource.Version)
-}
-
-func _unarchiveSchema(schemaId string, ci *ClientInfo) (content.ContentTypeSchema, error) {
-	result := content.ContentTypeSchema{}
-
-	log.Printf("Get info for content type schema %s", schemaId)
-	schema, getErr := _schemaBySchemaId(schemaId, ci, content.StatusAny)
-
-	if getErr != nil {
-		return result, getErr
-	}
-
-	log.Printf("Received content type schema version %v", schema.Version)
-	schema, err := ci.client.ContentTypeSchemaUnarchive(schema.ID, schema.Version)
-
-	if err != nil {
-		return schema, err
-	}
-
-	return schema, err
-}
-
-func _schemaBySchemaId(schemaId string, ci *ClientInfo, status content.ContentStatus) (content.ContentTypeSchema, error) {
-	dummy := content.ContentTypeSchema{}
-	schemaList, getErr := ci.client.ContentTypeSchemaGetAll(ci.hubID, status)
-
-	if getErr != nil {
-		return dummy, getErr
-	}
-
-	for _, schema := range schemaList {
-		if schema.SchemaID == schemaId {
-			return schema, nil
-		}
-	}
-
-	return dummy, fmt.Errorf(fmt.Sprintf("Could not find schema %s", schemaId))
 }

@@ -6,9 +6,12 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
-	github.com/labd/amplience-go-sdk v0.0.0-20221013134454-62b5e840c6b9
+	github.com/labd/amplience-go-sdk v0.0.0-20221014090308-3130001fcb1b
 	github.com/stretchr/testify v1.7.0
 )
+
+// Uncomment this line for local development with amplience-go-sdk
+// replace github.com/labd/amplience-go-sdk => ../amplience-go-sdk
 
 require (
 	cloud.google.com/go v0.65.0 // indirect

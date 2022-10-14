@@ -2,6 +2,7 @@ package amplience
 
 import (
 	"context"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/labd/amplience-go-sdk/content"
@@ -85,13 +86,30 @@ func resourceContentTypeCreate(ctx context.Context, data *schema.ResourceData, m
 	ci := getClient(meta)
 
 	input := resourceContentTypeCreateInput(data)
-	content_type, err := ci.client.ContentTypeCreate(ci.hubID, input)
+	instance, err := ci.client.ContentTypeCreate(ci.hubID, input)
+
+	if errResp, ok := err.(*content.ErrorResponse); ok {
+		if errResp.StatusCode >= 400 {
+
+			log.Println("Received 400 conflict response; schema already exists")
+
+			instance, err = ci.client.ContentTypeFindByUri(input.ContentTypeURI, ci.hubID)
+
+			if err != nil {
+				return diag.FromErr(err)
+			}
+
+			if instance.Status == string(content.StatusArchived) {
+				instance, err = ci.client.ContentTypeUnarchive(instance.ID)
+			}
+		}
+	}
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceContentTypeSaveState(data, content_type)
+	resourceContentTypeSaveState(data, instance)
 	return diags
 }
 
