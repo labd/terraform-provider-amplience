@@ -6,7 +6,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
-	github.com/labd/amplience-go-sdk v0.0.0-20221014090308-3130001fcb1b
+	github.com/labd/amplience-go-sdk v0.0.0-20221014094808-4c05dd3a691b
 	github.com/stretchr/testify v1.7.0
 )
 
