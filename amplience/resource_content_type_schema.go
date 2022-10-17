@@ -63,16 +63,21 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 	if errResp, ok := err.(*content.ErrorResponse); ok {
 		if errResp.StatusCode >= 400 {
 
-			log.Println("Received 400 conflict response; schema already exists")
+			log.Println("Received 400 conflict response: content type schema already exists.")
+			log.Println("Proceeding to unarchive if necessary and update exiting content type schema.")
 
 			instance, err = ci.client.ContentTypeSchemaFindBySchemaId(input.SchemaID, ci.hubID)
-
 			if err != nil {
 				return diag.FromErr(err)
 			}
 
 			if instance.Status == string(content.StatusArchived) {
 				instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
+			}
+
+			instance, err = ci.client.ContentTypeSchemaUpdate(instance, input)
+			if err != nil {
+				return diag.FromErr(err)
 			}
 		}
 	}
@@ -103,11 +108,20 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 	var diags diag.Diagnostics
 	ci := getClient(meta)
 
-	schema_id := data.Id()
+	id := data.Id()
+
 	if data.HasChange("body") || data.HasChange("validation_level") {
-		current, err := ci.client.ContentTypeSchemaGet(schema_id)
+		instance, err := ci.client.ContentTypeSchemaGet(id)
 		if err != nil {
 			return diag.FromErr(err)
+		}
+
+		if instance.Status == string(content.StatusArchived) {
+			log.Println("Content type was archived. Proceed to unarchive first before applying update.")
+			instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
+			if err != nil {
+				return diag.FromErr(err)
+			}
 		}
 
 		input := content.ContentTypeSchemaInput{
@@ -115,8 +129,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 			Body:            data.Get("body").(string),
 			ValidationLevel: data.Get("validation_level").(string),
 		}
-
-		schema, err := ci.client.ContentTypeSchemaUpdate(current, input)
+		schema, err := ci.client.ContentTypeSchemaUpdate(instance, input)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -127,7 +140,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 	return diags
 }
 
-// The amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
+// The Amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
 func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
