@@ -74,6 +74,9 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 			if instance.Status == string(content.StatusArchived) {
 				instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
 			}
+			if err != nil {
+				return diag.FromErr(err)
+			}
 
 			instance, err = ci.client.ContentTypeSchemaUpdate(instance, input)
 			if err != nil {

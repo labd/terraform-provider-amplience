@@ -103,6 +103,9 @@ func resourceContentTypeCreate(ctx context.Context, data *schema.ResourceData, m
 			if instance.Status == string(content.StatusArchived) {
 				instance, err = ci.client.ContentTypeUnarchive(instance.ID)
 			}
+			if err != nil {
+				return diag.FromErr(err)
+			}
 
 			instance, err = ci.client.ContentTypeUpdate(instance, input)
 			if err != nil {
