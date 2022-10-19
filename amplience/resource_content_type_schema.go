@@ -143,20 +143,27 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 	return diags
 }
 
-// The Amplience API does not have a repository delete functionality. Setting ID to "" and returning nil
+// The Amplience API does not have a content type delete functionality. Setting ID to "" and returning nil
 func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	ci := getClient(meta)
 
 	id := data.Id()
-	version := data.Get("version").(int)
+	resource, err := ci.client.ContentTypeSchemaGet(id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
-	_, err := ci.client.ContentTypeSchemaArchive(id, version)
+	_, err = ci.client.ContentTypeSchemaArchive(id, resource.Version)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data.SetId("")
+	data.Set("schema_id", resource.SchemaID)
+	data.Set("body", resource.Body)
+	data.Set("validation_level", resource.ValidationLevel)
+	data.Set("version", resource.Version)
 	return diags
 }
 
