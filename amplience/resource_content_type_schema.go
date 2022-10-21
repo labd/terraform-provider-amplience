@@ -149,21 +149,26 @@ func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceD
 	ci := getClient(meta)
 
 	id := data.Id()
-	resource, err := ci.client.ContentTypeSchemaGet(id)
+	instance, err := ci.client.ContentTypeSchemaGet(id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	_, err = ci.client.ContentTypeSchemaArchive(id, resource.Version)
+	if instance.Status == string(content.StatusActive) {
+		_, err = ci.client.ContentTypeSchemaArchive(id, instance.Version)
+	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data.SetId("")
-	data.Set("schema_id", resource.SchemaID)
-	data.Set("body", resource.Body)
-	data.Set("validation_level", resource.ValidationLevel)
-	data.Set("version", resource.Version)
+	data.Set("schema_id", instance.SchemaID)
+	data.Set("body", instance.Body)
+	data.Set("validation_level", instance.ValidationLevel)
+	data.Set("version", instance.Version)
 	return diags
 }
 
