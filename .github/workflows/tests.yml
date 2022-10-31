@@ -10,22 +10,27 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        go-version: ["1.17"]
+        go-version: ["1.19.x"]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Go ${{ matrix.go-version }}
-        uses: WillAbides/setup-go-faster@v1.7.0
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+
       - name: Install dependencies
         run: go get ./amplience
-      - name: Run staticcheck
-        uses: dominikh/staticcheck-action@v1.0.0
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
         with:
-          version: "2021.1.2"
-          install-go: false
-          cache-key: ${{ matrix.go-version }}
+          args: --issues-exit-code=0
+
       - name: Run tests
         run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
         env:
@@ -34,5 +39,6 @@ jobs:
           AMPLIENCE_CLIENT_ID: ${{ secrets.AMPLIENCE_CLIENT_ID }}
           AMPLIENCE_CLIENT_SECRET: ${{ secrets.AMPLIENCE_CLIENT_SECRET }}
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
+
       - name: Upload to codecov
         uses: codecov/codecov-action@v1.0.6
