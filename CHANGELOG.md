@@ -1,3 +1,12 @@
+# v0.3.14 (2022-10-21)
+
+- Add check in delete for archiving
+
+# v0.3.13 (2022-10-19)
+
+- Check for version before deleting content type
+- Improve error handling
+
 # v0.3.12 (2022-10-17)
 
 - Update content type (schema) queries to allow for querying archived schemas
