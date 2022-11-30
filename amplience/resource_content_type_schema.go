@@ -157,7 +157,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 
 			if err != nil {
 				// Log, but don't fail the apply step itself
-				log.Fatalf("Could not sync content type: %s", err)
+				return diag.FromErr(err)
 			}
 
 			log.Printf("Synced content type %s", syncResult.ContentTypeURI)
