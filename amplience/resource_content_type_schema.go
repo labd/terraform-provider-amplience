@@ -2,6 +2,7 @@ package amplience
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -151,16 +152,21 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 			contentType, err := ci.client.ContentTypeFindByUri(instance.SchemaID, ci.hubID)
 			if err != nil {
 				log.Printf("No content type found for %s, will skip syncing", instance.SchemaID)
+			} else {
+				syncResult, err := ci.client.ContentTypeSyncSchema(contentType)
+
+				if err != nil {
+					// When syncing could not be performed, for example when no content type exists with this schema,
+					// it is received as 'Authorization required.'
+					// On any error, we'll just inform that no syncing took place, and continue.
+					diags = append(diags, diag.Diagnostic{
+						Severity: diag.Warning,
+						Summary:  fmt.Sprintf("Could not auto-sync schema %s", instance.SchemaID),
+					})
+				} else {
+					log.Printf("Synced content type %s", syncResult.ContentTypeURI)
+				}
 			}
-
-			syncResult, err := ci.client.ContentTypeSyncSchema(contentType)
-
-			if err != nil {
-				// Log, but don't fail the apply step itself
-				return diag.FromErr(err)
-			}
-
-			log.Printf("Synced content type %s", syncResult.ContentTypeURI)
 		}
 	}
 
