@@ -2,6 +2,7 @@ package amplience
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -42,6 +43,11 @@ func resourceContentTypeSchema() *schema.Resource {
 			"version": {
 				Type:     schema.TypeInt,
 				Computed: true,
+			},
+			"auto_sync": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 		},
 	}
@@ -115,12 +121,13 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 
 	if data.HasChange("body") || data.HasChange("validation_level") {
 		instance, err := ci.client.ContentTypeSchemaGet(id)
+
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
 		if instance.Status == string(content.StatusArchived) {
-			log.Println("Content type was archived. Proceed to unarchive first before applying update.")
+			log.Println("Content type schema was archived. Proceed to unarchive first before applying update.")
 			instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
 			if err != nil {
 				return diag.FromErr(err)
@@ -138,6 +145,29 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 		}
 
 		resourceContentTypeSchemaSaveState(data, schema)
+
+		if data.Get("auto_sync").(bool) {
+			log.Printf("Content type schema %s has been updated; will auto-sync...", instance.SchemaID)
+
+			contentType, err := ci.client.ContentTypeFindByUri(instance.SchemaID, ci.hubID)
+			if err != nil {
+				log.Printf("No content type found for %s, will skip syncing", instance.SchemaID)
+			} else {
+				syncResult, err := ci.client.ContentTypeSyncSchema(contentType)
+
+				if err != nil {
+					// When syncing could not be performed, for example when no content type exists with this schema,
+					// it is received as 'Authorization required.'
+					// On any error, we'll just inform that no syncing took place, and continue.
+					diags = append(diags, diag.Diagnostic{
+						Severity: diag.Warning,
+						Summary:  fmt.Sprintf("Could not auto-sync schema %s", instance.SchemaID),
+					})
+				} else {
+					log.Printf("Synced content type %s", syncResult.ContentTypeURI)
+				}
+			}
+		}
 	}
 
 	return diags
