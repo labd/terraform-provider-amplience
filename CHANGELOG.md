@@ -1,3 +1,7 @@
+# v0.4.0 (2022-10-21)
+
+- Add `auto_sync` option to `amplience_content_type_schema` resource
+
 # v0.3.14 (2022-10-21)
 
 - Add check in delete for archiving
