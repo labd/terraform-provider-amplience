@@ -63,12 +63,13 @@ resource "amplience_content_type_schema" "tag" {
 
 ### Required
 
-- **body** (String)
-- **schema_id** (String)
+- **body** (String) JSON definition of the schema
+- **schema_id** (String) Unique schema ID
 - **validation_level** (String)
 
 ### Optional
 
+- **auto_sync** (Boolean) Enable if you want content types to be automatically synced when the schema gets updated
 - **id** (String) The ID of this resource.
 
 ### Read-Only

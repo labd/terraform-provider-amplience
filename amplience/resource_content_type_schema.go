@@ -27,14 +27,16 @@ func resourceContentTypeSchema() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"body": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "JSON definition of the schema",
 			},
 			"schema_id": {
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
 				ValidateDiagFunc: ValidateDiagWrapper(validation.StringDoesNotContainAny(" ")),
+				Description:      "Unique schema ID",
 			},
 			"validation_level": {
 				Type:     schema.TypeString,
@@ -45,9 +47,10 @@ func resourceContentTypeSchema() *schema.Resource {
 				Computed: true,
 			},
 			"auto_sync": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Enable if you want content types to be automatically synced when the schema gets updated",
 			},
 		},
 	}
