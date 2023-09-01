@@ -7,11 +7,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      max-parallel: 4
-      matrix:
-        go-version: ["1.19.x"]
-
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -21,10 +16,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.20"
 
       - name: Install dependencies
-        run: go get ./amplience
+        run: go get ./...
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
@@ -41,4 +36,25 @@ jobs:
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
 
       - name: Upload to codecov
-        uses: codecov/codecov-action@v1.0.6
+        uses: codecov/codecov-action@v3
+        with:
+          verbose: true
+
+  changie:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Prepare release
+        uses: labd/changie-release-action@v0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-workflow: 'release.yaml'
