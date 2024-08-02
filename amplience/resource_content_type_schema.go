@@ -67,7 +67,7 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 		ValidationLevel: data.Get("validation_level").(string),
 	}
 
-	instance, err := ci.client.ContentTypeSchemaCreate(ci.hubID, input)
+	instance, err := ci.Client.ContentTypeSchemaCreate(ci.HubID, input)
 
 	if errResp, ok := err.(*content.ErrorResponse); ok {
 		if errResp.StatusCode >= 400 {
@@ -75,19 +75,19 @@ func resourceContentTypeSchemaCreate(ctx context.Context, data *schema.ResourceD
 			log.Println("Received 400 conflict response: content type schema already exists.")
 			log.Println("Proceeding to unarchive if necessary and update exiting content type schema.")
 
-			instance, err = ci.client.ContentTypeSchemaFindBySchemaId(input.SchemaID, ci.hubID)
+			instance, err = ci.Client.ContentTypeSchemaFindBySchemaId(input.SchemaID, ci.HubID)
 			if err != nil {
 				return diag.FromErr(err)
 			}
 
 			if instance.Status == string(content.StatusArchived) {
-				instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
+				instance, err = ci.Client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
 			}
 			if err != nil {
 				return diag.FromErr(err)
 			}
 
-			instance, err = ci.client.ContentTypeSchemaUpdate(instance, input)
+			instance, err = ci.Client.ContentTypeSchemaUpdate(instance, input)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -107,7 +107,7 @@ func resourceContentTypeSchemaRead(ctx context.Context, data *schema.ResourceDat
 	ci := getClient(meta)
 
 	schema_id := data.Id()
-	schema, err := ci.client.ContentTypeSchemaGet(schema_id)
+	schema, err := ci.Client.ContentTypeSchemaGet(schema_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -123,7 +123,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 	id := data.Id()
 
 	if data.HasChange("body") || data.HasChange("validation_level") {
-		instance, err := ci.client.ContentTypeSchemaGet(id)
+		instance, err := ci.Client.ContentTypeSchemaGet(id)
 
 		if err != nil {
 			return diag.FromErr(err)
@@ -131,7 +131,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 
 		if instance.Status == string(content.StatusArchived) {
 			log.Println("Content type schema was archived. Proceed to unarchive first before applying update.")
-			instance, err = ci.client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
+			instance, err = ci.Client.ContentTypeSchemaUnarchive(instance.ID, instance.Version)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -142,7 +142,7 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 			Body:            data.Get("body").(string),
 			ValidationLevel: data.Get("validation_level").(string),
 		}
-		schema, err := ci.client.ContentTypeSchemaUpdate(instance, input)
+		schema, err := ci.Client.ContentTypeSchemaUpdate(instance, input)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -152,11 +152,11 @@ func resourceContentTypeSchemaUpdate(ctx context.Context, data *schema.ResourceD
 		if data.Get("auto_sync").(bool) {
 			log.Printf("Content type schema %s has been updated; will auto-sync...", instance.SchemaID)
 
-			contentType, err := ci.client.ContentTypeFindByUri(instance.SchemaID, ci.hubID)
+			contentType, err := ci.Client.ContentTypeFindByUri(instance.SchemaID, ci.HubID)
 			if err != nil {
 				log.Printf("No content type found for %s, will skip syncing", instance.SchemaID)
 			} else {
-				syncResult, err := ci.client.ContentTypeSyncSchema(contentType)
+				syncResult, err := ci.Client.ContentTypeSyncSchema(contentType)
 
 				if err != nil {
 					// When syncing could not be performed, for example when no content type exists with this schema,
@@ -182,7 +182,7 @@ func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceD
 	ci := getClient(meta)
 
 	id := data.Id()
-	instance, err := ci.client.ContentTypeSchemaGet(id)
+	instance, err := ci.Client.ContentTypeSchemaGet(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -191,7 +191,7 @@ func resourceContentTypeSchemaDelete(ctx context.Context, data *schema.ResourceD
 	}
 
 	if instance.Status == string(content.StatusActive) {
-		_, err = ci.client.ContentTypeSchemaArchive(id, instance.Version)
+		_, err = ci.Client.ContentTypeSchemaArchive(id, instance.Version)
 	}
 	if err != nil {
 		return diag.FromErr(err)

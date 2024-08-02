@@ -68,15 +68,15 @@ func resourceSearchIndexCreate(ctx context.Context, data *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 
-	resource, err := ci.client.AlgoliaIndexCreate(ci.hubID, *input)
+	resource, err := ci.Client.AlgoliaIndexCreate(ci.HubID, *input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	err = updateIndexWebhooksAndSettings(ci.client, ci.hubID, resource.ID, data)
+	err = updateIndexWebhooksAndSettings(ci.Client, ci.HubID, resource.ID, data)
 	if err != nil {
 		// clean up for timeouts etc.
-		_, err = ci.client.AlgoliaIndexDelete(ci.hubID, resource.ID)
+		_, err = ci.Client.AlgoliaIndexDelete(ci.HubID, resource.ID)
 		return diag.FromErr(err)
 	}
 
@@ -90,7 +90,7 @@ func resourceSearchIndexRead(ctx context.Context, data *schema.ResourceData, met
 
 	id := data.Id()
 
-	resource, err := ci.client.AlgoliaIndexGet(ci.hubID, id)
+	resource, err := ci.Client.AlgoliaIndexGet(ci.HubID, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -104,7 +104,7 @@ func resourceSearchIndexUpdate(ctx context.Context, data *schema.ResourceData, m
 
 	id := data.Id()
 
-	old, err := ci.client.AlgoliaIndexGet(ci.hubID, id)
+	old, err := ci.Client.AlgoliaIndexGet(ci.HubID, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -118,23 +118,23 @@ func resourceSearchIndexUpdate(ctx context.Context, data *schema.ResourceData, m
 	// NOTE: this removes all currently saved indexes and requires a republish of all content types involved.
 	var new content.AlgoliaIndex
 	if old.Suffix != input.Suffix || old.Type != input.Type {
-		_, err = ci.client.AlgoliaIndexDelete(ci.hubID, id)
+		_, err = ci.Client.AlgoliaIndexDelete(ci.HubID, id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		new, err = ci.client.AlgoliaIndexCreate(ci.hubID, *input)
+		new, err = ci.Client.AlgoliaIndexCreate(ci.HubID, *input)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
 	} else {
-		new, err = ci.client.AlgoliaIndexUpdate(ci.hubID, old, *input)
+		new, err = ci.Client.AlgoliaIndexUpdate(ci.HubID, old, *input)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 	}
 
-	err = updateIndexWebhooksAndSettings(ci.client, ci.hubID, id, data)
+	err = updateIndexWebhooksAndSettings(ci.Client, ci.HubID, id, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -149,7 +149,7 @@ func resourceSearchIndexDelete(ctx context.Context, data *schema.ResourceData, m
 
 	id := data.Id()
 
-	_, err := ci.client.AlgoliaIndexDelete(ci.hubID, id)
+	_, err := ci.Client.AlgoliaIndexDelete(ci.HubID, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

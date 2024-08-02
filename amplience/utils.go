@@ -20,8 +20,8 @@ func createID(hub_id string, resource_id string) string {
 }
 
 type ClientInfo struct {
-	client *content.Client
-	hubID  string
+	Client *content.Client
+	HubID  string
 }
 
 func getClient(meta interface{}) *ClientInfo {

@@ -3,7 +3,6 @@ package amplience
 import (
 	"context"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -74,10 +73,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	var diags diag.Diagnostics
 
-	// FIXME: pass context to amplience sdk client
-	spew.Dump(clientID)
-	spew.Dump(clientSecret)
-
 	client, err := content.NewClient(&content.ClientConfig{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
@@ -88,10 +83,10 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.FromErr(err)
 	}
 
-	client_info := &ClientInfo{
-		client: client,
-		hubID:  d.Get("hub_id").(string),
+	clientInfo := &ClientInfo{
+		Client: client,
+		HubID:  d.Get("hub_id").(string),
 	}
 
-	return client_info, diags
+	return clientInfo, diags
 }

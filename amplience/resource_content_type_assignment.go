@@ -37,7 +37,7 @@ func resourceContentTypeAssignmentCreate(ctx context.Context, data *schema.Resou
 	repository_id := data.Get("repository_id").(string)
 	content_type_id := data.Get("content_type_id").(string)
 
-	_, err := ci.client.ContentRepositoryAssignContentType(repository_id, content_type_id)
+	_, err := ci.Client.ContentRepositoryAssignContentType(repository_id, content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -63,7 +63,7 @@ func resourceContentTypeAssignmentDelete(ctx context.Context, data *schema.Resou
 
 	repository_id, content_type_id := parseID(data.Id())
 
-	_, err := ci.client.ContentRepositoryRemoveContentType(repository_id, content_type_id)
+	_, err := ci.Client.ContentRepositoryRemoveContentType(repository_id, content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

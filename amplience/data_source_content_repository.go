@@ -42,7 +42,7 @@ func dataSourceContentRepositoryRead(ctx context.Context, data *schema.ResourceD
 	ci := getClient(meta)
 
 	repository_id := data.Get("id").(string)
-	repository, err := ci.client.ContentRepositoryGet(repository_id)
+	repository, err := ci.Client.ContentRepositoryGet(repository_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

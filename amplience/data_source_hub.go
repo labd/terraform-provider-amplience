@@ -34,7 +34,7 @@ func dataSourceHubRead(ctx context.Context, data *schema.ResourceData, meta inte
 
 	hub_id := data.Get("id").(string)
 
-	hub, err := ci.client.HubGet(hub_id)
+	hub, err := ci.Client.HubGet(hub_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
