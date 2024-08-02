@@ -49,7 +49,7 @@ func resourceContentRepositoryCreate(ctx context.Context, data *schema.ResourceD
 		Label: data.Get("label").(string),
 	}
 
-	repository, err := ci.client.ContentRepositoryCreate(ci.hubID, input)
+	repository, err := ci.Client.ContentRepositoryCreate(ci.HubID, input)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -67,7 +67,7 @@ func resourceContentRepositoryRead(ctx context.Context, data *schema.ResourceDat
 
 	repository_id := data.Id()
 
-	repository, err := ci.client.ContentRepositoryGet(repository_id)
+	repository, err := ci.Client.ContentRepositoryGet(repository_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -84,7 +84,7 @@ func resourceContentRepositoryUpdate(ctx context.Context, data *schema.ResourceD
 	repository_id := data.Id()
 
 	if data.HasChange("label") || data.HasChange("name") {
-		current, err := ci.client.ContentRepositoryGet(repository_id)
+		current, err := ci.Client.ContentRepositoryGet(repository_id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -94,7 +94,7 @@ func resourceContentRepositoryUpdate(ctx context.Context, data *schema.ResourceD
 			Label: data.Get("label").(string),
 		}
 
-		repository, err := ci.client.ContentRepositoryUpdate(current, input)
+		repository, err := ci.Client.ContentRepositoryUpdate(current, input)
 		if err != nil {
 			return diag.FromErr(err)
 		}

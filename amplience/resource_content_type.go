@@ -86,7 +86,7 @@ func resourceContentTypeCreate(ctx context.Context, data *schema.ResourceData, m
 	ci := getClient(meta)
 
 	input := resourceContentTypeCreateInput(data)
-	instance, err := ci.client.ContentTypeCreate(ci.hubID, input)
+	instance, err := ci.Client.ContentTypeCreate(ci.HubID, input)
 
 	if errResp, ok := err.(*content.ErrorResponse); ok {
 		if errResp.StatusCode >= 400 {
@@ -94,20 +94,20 @@ func resourceContentTypeCreate(ctx context.Context, data *schema.ResourceData, m
 			log.Println("Received 400 conflict response: content type already exists.")
 			log.Println("Proceeding to unarchive if necessary and update exiting content type.")
 
-			instance, err = ci.client.ContentTypeFindByUri(input.ContentTypeURI, ci.hubID)
+			instance, err = ci.Client.ContentTypeFindByUri(input.ContentTypeURI, ci.HubID)
 
 			if err != nil {
 				return diag.FromErr(err)
 			}
 
 			if instance.Status == string(content.StatusArchived) {
-				instance, err = ci.client.ContentTypeUnarchive(instance.ID)
+				instance, err = ci.Client.ContentTypeUnarchive(instance.ID)
 			}
 			if err != nil {
 				return diag.FromErr(err)
 			}
 
-			instance, err = ci.client.ContentTypeUpdate(instance, input)
+			instance, err = ci.Client.ContentTypeUpdate(instance, input)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -127,7 +127,7 @@ func resourceContentTypeRead(ctx context.Context, data *schema.ResourceData, met
 	ci := getClient(meta)
 
 	content_type_id := data.Id()
-	content_type, err := ci.client.ContentTypeGet(content_type_id)
+	content_type, err := ci.Client.ContentTypeGet(content_type_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -142,7 +142,7 @@ func resourceContentTypeUpdate(ctx context.Context, data *schema.ResourceData, m
 
 	id := data.Id()
 
-	instance, err := ci.client.ContentTypeGet(id)
+	instance, err := ci.Client.ContentTypeGet(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -150,14 +150,14 @@ func resourceContentTypeUpdate(ctx context.Context, data *schema.ResourceData, m
 	if instance.Status == string(content.StatusArchived) {
 		log.Println("Content type was archived. Proceed to unarchive first before applying update.")
 
-		instance, err = ci.client.ContentTypeUnarchive(instance.ID)
+		instance, err = ci.Client.ContentTypeUnarchive(instance.ID)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 	}
 
 	input := resourceContentTypeCreateInput(data)
-	content_type, err := ci.client.ContentTypeUpdate(instance, input)
+	content_type, err := ci.Client.ContentTypeUpdate(instance, input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -173,7 +173,7 @@ func resourceContentTypeDelete(ctx context.Context, data *schema.ResourceData, m
 
 	id := data.Id()
 
-	_, err := ci.client.ContentTypeArchive(id)
+	_, err := ci.Client.ContentTypeArchive(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

@@ -56,7 +56,6 @@ func Provider() *schema.Provider {
 			"amplience_content_type_schema":     resourceContentTypeSchema(),
 			"amplience_webhook":                 resourceWebhook(),
 			"amplience_search_index":            resourceSearchIndex(),
-			"amplience_hub":                     resourceHub(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"amplience_hub":                dataSourceHub(),
@@ -85,8 +84,8 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 
 	clientInfo := &ClientInfo{
-		client: client,
-		hubID:  d.Get("hub_id").(string),
+		Client: client,
+		HubID:  d.Get("hub_id").(string),
 	}
 
 	return clientInfo, diags

@@ -167,7 +167,7 @@ func resourceWebhookCreate(ctx context.Context, data *schema.ResourceData, meta 
 		return diag.FromErr(fmt.Errorf("error creating webhook draft: %w", err))
 	}
 
-	webhook, err := ci.client.WebhookCreate(ci.hubID, *input)
+	webhook, err := ci.Client.WebhookCreate(ci.HubID, *input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -182,7 +182,7 @@ func resourceWebhookRead(ctx context.Context, data *schema.ResourceData, meta in
 
 	webhook_id := data.Id()
 
-	webhook, err := ci.client.WebhookGet(ci.hubID, webhook_id)
+	webhook, err := ci.Client.WebhookGet(ci.HubID, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -196,7 +196,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 
 	webhook_id := data.Id()
 
-	webhook, err := ci.client.WebhookGet(ci.hubID, webhook_id)
+	webhook, err := ci.Client.WebhookGet(ci.HubID, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -206,7 +206,7 @@ func resourceWebhookUpdate(ctx context.Context, data *schema.ResourceData, meta 
 		return diag.FromErr(err)
 	}
 
-	new, err := ci.client.WebhookUpdate(ci.hubID, webhook, *input)
+	new, err := ci.Client.WebhookUpdate(ci.HubID, webhook, *input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -220,7 +220,7 @@ func resourceWebhookDelete(ctx context.Context, data *schema.ResourceData, meta 
 
 	webhook_id := data.Id()
 
-	err := ci.client.WebhookDelete(ci.hubID, webhook_id)
+	err := ci.Client.WebhookDelete(ci.HubID, webhook_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
