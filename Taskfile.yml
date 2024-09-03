@@ -1,18 +1,10 @@
 version: '3'
 
 tasks:
-  build-local:
-    cmds:
-      - go build -o terraform-provider-{{ .NAME }}_{{ .VERSION }}
-      - mkdir -p ~/.terraform.d/plugins/registry.terraform.io/labd/{{ .NAME }}/{{ .VERSION }}/{{ .PLATFORM }}/
-      - mv terraform-provider-{{ .NAME }}_{{ .VERSION }} ~/.terraform.d/plugins/registry.terraform.io/labd/{{ .NAME }}/{{ .VERSION }}/{{ .PLATFORM }}/terraform-provider-{{ .NAME }}_v{{ .VERSION }}
-      - cmd: codesign --deep --force -s - ~/.terraform.d/plugins/registry.terraform.io/labd/{{ .NAME }}/{{ .VERSION }}/{{ .PLATFORM }}/terraform-provider-{{ .NAME }}_v{{ .VERSION }}
-        platforms: [darwin]
-    vars:
-      VERSION: 99.0.0
-      NAME: commercetools
-      PLATFORM:
-        sh: echo "$(go env GOOS)_$(go env GOARCH)"
+  build:
+    env:
+      GORELEASER_CURRENT_TAG: "v0.0.0"
+    cmd: goreleaser build --snapshot --clean --single-target --output terraform-provider-amplience
 
   format:
     cmds:

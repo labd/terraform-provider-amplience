@@ -18,3 +18,5 @@ crash.log
 
 // Go modules
 vendor/
+
+/terraform-provider-amplience
