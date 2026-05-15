@@ -9,21 +9,24 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: "go.mod"
+          cache: false
 
       - name: Install dependencies
         run: go get ./...
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
         with:
+          version: v2.12.2
           args: --issues-exit-code=0
 
       - name: Run tests
@@ -36,12 +39,12 @@ jobs:
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
 
       - name: Upload to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4.6.0
         with:
           verbose: true
 
       - name: build binary
-        uses: goreleaser/goreleaser-action@v6
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
         with:
           args: build --snapshot --clean --single-target
         env:
@@ -56,12 +59,13 @@ jobs:
       pull-requests: write
       actions: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Prepare release
-        uses: labd/changie-release-action@v0.4.0
+        uses: labd/changie-release-action@c3368fda69f814cd8b78d36834fb154254ea8c23 # v0.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-workflow: 'release.yaml'
