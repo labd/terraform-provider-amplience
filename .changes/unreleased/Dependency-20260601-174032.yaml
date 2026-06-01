@@ -1,3 +1,0 @@
-kind: Dependency
-body: Update grpc, oauth2, net, and crypto to their latest stable releases to address security advisories. The `go` directive was bumped from 1.22 to 1.25.0 as required by the updated modules.
-time: 2026-06-01T17:40:32.237561+02:00
