@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/labd/amplience-go-sdk/content"
 	"github.com/labd/terraform-provider-amplience/amplience"
+	"github.com/labd/terraform-provider-amplience/internal/resources/extension"
 	"github.com/labd/terraform-provider-amplience/internal/resources/hub"
 	"github.com/labd/terraform-provider-amplience/internal/utils"
 	"net/http"
@@ -194,5 +195,6 @@ func (p *amplienceProvider) DataSources(_ context.Context) []func() datasource.D
 func (p *amplienceProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		hub.NewHubResource,
+		extension.NewExtensionResource,
 	}
 }
