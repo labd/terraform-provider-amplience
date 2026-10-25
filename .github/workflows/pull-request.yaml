@@ -15,7 +15,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: "go.mod"
           cache: false
@@ -24,9 +24,9 @@ jobs:
         run: go get ./...
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
-          version: v2.12.2
+          version: v2.15.0
           args: --issues-exit-code=0
 
       - name: Run tests
@@ -39,8 +39,9 @@ jobs:
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
 
       - name: build binary
-        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         with:
+          version: "~> v2"
           args: build --snapshot --clean --single-target
         env:
           GOPATH: ${{ env.GOPATH }}
