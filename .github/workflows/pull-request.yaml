@@ -30,18 +30,13 @@ jobs:
           args: --issues-exit-code=0
 
       - name: Run tests
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
+        run: go test -race -v ./...
         env:
           # we need an AMPLIENCE_HUB_ID dedicated to testing
           # TF_ACC: 1
           AMPLIENCE_CLIENT_ID: ${{ secrets.AMPLIENCE_CLIENT_ID }}
           AMPLIENCE_CLIENT_SECRET: ${{ secrets.AMPLIENCE_CLIENT_SECRET }}
           AMPLIENCE_HUB_ID: ${{ secrets.AMPLIENCE_HUB_ID }}
-
-      - name: Upload to codecov
-        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4.6.0
-        with:
-          verbose: true
 
       - name: build binary
         uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
