@@ -424,11 +424,12 @@ func resourceWebhookGetCustomPayloadAndValidate(input interface{}) (*content.Web
 	payload := content.WebhookCustomPayload{}
 
 	for key, value := range inputMap {
-		if key == "type" {
+		switch key {
+		case "type":
 			payload.Type = value.(string)
-		} else if key == "value" {
+		case "value":
 			payload.Value = value.(string)
-		} else {
+		default:
 			return nil, fmt.Errorf("unknown key %s in custom payload field", key)
 		}
 	}

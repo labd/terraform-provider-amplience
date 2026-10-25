@@ -35,7 +35,6 @@ func TestStringInSlice(t *testing.T) {
 	}
 
 	for _, tc := range tcs {
-		tc := tc // https://github.com/golang/go/wiki/CommonMistakes#using-goroutines-on-loop-iterator-variables
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 			got := StringInSlice(tc.Valid, tc.Input)

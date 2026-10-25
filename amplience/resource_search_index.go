@@ -126,7 +126,6 @@ func resourceSearchIndexUpdate(ctx context.Context, data *schema.ResourceData, m
 		if err != nil {
 			return diag.FromErr(err)
 		}
-
 	} else {
 		new, err = ci.Client.AlgoliaIndexUpdate(ci.HubID, old, *input)
 		if err != nil {
@@ -166,7 +165,6 @@ func resourceSearchIndexSaveState(data *schema.ResourceData, resource content.Al
 }
 
 func createIndexInput(data *schema.ResourceData) (*content.AlgoliaIndexInput, error) {
-
 	var assignedContentTypes []content.AssignedContentTypeInput
 	for _, val := range data.Get("content_types").([]interface{}) {
 		uri := val.(string)
@@ -195,7 +193,6 @@ func createAlgoliaIndexSettings(input string) (content.AlgoliaIndexSettings, err
 	return settingsInput, err
 }
 func updateIndexWebhooksAndSettings(client *content.Client, hubId string, indexId string, data *schema.ResourceData) error {
-
 	settingsInput, err := createAlgoliaIndexSettings(data.Get("settings").(string))
 	if err != nil {
 		return err

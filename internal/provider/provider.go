@@ -3,6 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"os"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -16,8 +19,6 @@ import (
 	"github.com/labd/terraform-provider-amplience/internal/resources/extension"
 	"github.com/labd/terraform-provider-amplience/internal/resources/hub"
 	"github.com/labd/terraform-provider-amplience/internal/utils"
-	"net/http"
-	"os"
 )
 
 // Ensure the implementation satisfies the expected interfaces

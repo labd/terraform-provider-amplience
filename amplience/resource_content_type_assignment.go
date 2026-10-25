@@ -70,7 +70,6 @@ func resourceContentTypeAssignmentDelete(ctx context.Context, data *schema.Resou
 
 	data.SetId("")
 	return diags
-
 }
 
 func resourceContentTypeAssignmentSaveState(data *schema.ResourceData, repository_id string, content_type_id string) {
