@@ -90,7 +90,6 @@ func resourceContentTypeCreate(ctx context.Context, data *schema.ResourceData, m
 
 	if errResp, ok := err.(*content.ErrorResponse); ok {
 		if errResp.StatusCode >= 400 {
-
 			log.Println("Received 400 conflict response: content type already exists.")
 			log.Println("Proceeding to unarchive if necessary and update exiting content type.")
 

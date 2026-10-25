@@ -80,10 +80,3 @@ func nullableString(s string) types.String {
 	}
 	return types.StringValue(s)
 }
-
-func nullableInt64(i int) types.Int64 {
-	if i == 0 {
-		return types.Int64Null()
-	}
-	return types.Int64Value(int64(i))
-}
