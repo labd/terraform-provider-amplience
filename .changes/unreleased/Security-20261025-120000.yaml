@@ -1,3 +1,0 @@
-kind: Security
-body: Update google.golang.org/grpc to v1.83.1 and github.com/cloudflare/circl to v1.6.3 to address security advisories.
-time: 2026-10-25T12:00:00.000000+02:00

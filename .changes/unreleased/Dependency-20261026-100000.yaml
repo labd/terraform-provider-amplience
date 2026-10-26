@@ -1,3 +1,0 @@
-kind: Dependency
-body: Update all Go dependencies, including terraform-plugin-framework v1.19.0, terraform-plugin-sdk v2.40.1 and terraform-plugin-go v0.31.0
-time: 2026-10-26T10:00:00.000000+01:00
