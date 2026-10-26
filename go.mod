@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.31.0
 	github.com/hashicorp/terraform-plugin-mux v0.23.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.40.1
-	github.com/labd/amplience-go-sdk v1.0.0
+	github.com/labd/amplience-go-sdk v1.0.1
 	github.com/stretchr/testify v1.12.1
 )
 
