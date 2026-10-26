@@ -15,7 +15,7 @@ jobs:
           persist-credentials: false
 
       - name: Prepare release
-        uses: labd/changie-release-action@c3368fda69f814cd8b78d36834fb154254ea8c23 # v0.4.0
+        uses: labd/changie-release-action@52884337ae69c09e891915014a5621f6080f66ca # v0.6.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-workflow: release.yaml
